@@ -33,7 +33,7 @@ export PATH=$PATH:$GOPATH/bin
 
 ### Download Hyperledger fabric-samples to preffered directory
 ```
-git clone -b master https://github.com/hyperledger/fabric-samples.git
+$ git clone -b master https://github.com/hyperledger/fabric-samples.git
 ```
 
 ### Install fabric binaries version 1.2 into the fabric-samples root directory
