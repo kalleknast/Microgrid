@@ -22,7 +22,9 @@ $ go version
 ```
 
 ### Add go location to ```GOPATH``` and ```GOPATH``` to ```PATH```
-```$ vim ~/.bashrc```
+```
+$ vim ~/.bashrc
+```
 At the end of ```.bashrc``` add
 ```
 export GOPATH=$HOME/go
@@ -41,7 +43,9 @@ $ curl -sSL http://bit.ly/2ysbOFE | bash -s 1.2.0
 ```
 
 ### Add the fabric binaries to ```PATH```
-```$ vim ~/.bashrc```
+```
+$ vim ~/.bashrc
+```
 At the end of ```.bashrc``` add
 ```
 export PATH=<path to download location>/fabric-samples/bin:$PATH
