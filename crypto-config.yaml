@@ -1,0 +1,55 @@
+# Simple crypto-config.yaml, setting up 6 houses and 1 order.
+# Assuming the domain is microgrid.org
+# See example from:
+# https://dev.to/damcosset/your-first-hyperledger-fabric-network-2n67
+
+OrdererOrgs:
+  - Name: OrderingService
+    Domain: microgrid.org
+    Specs:
+      - Hostname: orderer
+
+PeerOrgs:
+  - Name: house01
+    Domain: house01.microgrid.org
+    EnableNodeOUs: true
+    Template:
+      Count: 2
+    Users: 
+      Count: 1
+  - Name: house02
+    Domain: house02.microgrid.org
+    EnableNodeOUs: true
+    Template:
+      Count: 2
+    Users: 
+      Count: 1
+  - Name: house03
+    Domain: house03.microgrid.org
+    EnableNodeOUs: true
+    Template:
+      Count: 2
+    Users:
+      Count: 1
+    - Name: house04
+    Domain: house04.microgrid.org
+    EnableNodeOUs: true
+    Template:
+      Count: 2
+    Users: 
+      Count: 1
+  - Name: house05
+    Domain: house05.microgrid.org
+    EnableNodeOUs: true
+    Template:
+      Count: 2
+    Users:
+      Count: 1
+  - Name: house06
+    Domain: house06.microgrid.org
+    EnableNodeOUs: true
+    Template:
+      Count: 2
+    Users:
+      Count: 1
+    
