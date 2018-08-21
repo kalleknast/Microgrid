@@ -50,3 +50,38 @@ At the end of ```.bashrc``` add
 ```
 export PATH=<path to download location>/fabric-samples/bin:$PATH
 ```
+
+## Set up the network
+
+```
+$ ../bin/cryptogen generate --config crypto-config.yaml --output=crypto-config
+```
+
+These lines should be printed:
+```
+house01.microgrid.org
+house02.microgrid.org
+house03.microgrid.org
+house04.microgrid.org
+house05.microgrid.org
+house06.microgrid.org
+```
+
+and a directory called ```crypto-config``` should created.
+
+### Create the orderer genesis block, channel configuration transaction and the anchor peer transactions, one for each peer organisation
+
+The ```configtxgen``` command doesn't automatically create the ```channel-artifacts``` directory.
+Do it manually.
+```
+$ mkdir channel-artifacts
+```
+
+```
+$ ../bin/configtxgen -profile OrdererGenesis -outputBlock ./channel-artifacts/genesis.block
+```
+
+The last line printed should be something like:
+```
+2018-08-21 17:26:31.191 EDT [common/tools/configtxgen] doOutputBlock -> INFO 013 Writing genesis block
+```
