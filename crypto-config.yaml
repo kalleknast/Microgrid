@@ -10,46 +10,45 @@ OrdererOrgs:
       - Hostname: orderer
 
 PeerOrgs:
-  - Name: house01
+  - Name: House01
     Domain: house01.microgrid.org
     EnableNodeOUs: true
     Template:
       Count: 2
-    Users: 
+    Users:
       Count: 1
-  - Name: house02
+  - Name: House02
     Domain: house02.microgrid.org
     EnableNodeOUs: true
     Template:
       Count: 2
-    Users: 
+    Users:
       Count: 1
-  - Name: house03
+  - Name: House03
     Domain: house03.microgrid.org
     EnableNodeOUs: true
     Template:
       Count: 2
     Users:
       Count: 1
-    - Name: house04
+  - Name: House04
     Domain: house04.microgrid.org
     EnableNodeOUs: true
     Template:
       Count: 2
-    Users: 
+    Users:
       Count: 1
-  - Name: house05
+  - Name: House05
     Domain: house05.microgrid.org
     EnableNodeOUs: true
     Template:
       Count: 2
     Users:
       Count: 1
-  - Name: house06
+  - Name: House06
     Domain: house06.microgrid.org
     EnableNodeOUs: true
     Template:
       Count: 2
     Users:
       Count: 1
-    
