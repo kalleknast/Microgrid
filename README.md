@@ -167,3 +167,15 @@ Should look something like this:
 ```
 root@b411f1d6d95e:/opt/gopath/src/github.com/hyperledger/fabric/peer#
 ```
+
+## chaincode
+
+Assumes you are in ```microgrid```
+```
+$ cd chaincode/go/src
+```
+Compile the chaincode
+```
+$ go get -u github.com/hyperledger/fabric/core/chaincode/shim
+$ go build
+```
