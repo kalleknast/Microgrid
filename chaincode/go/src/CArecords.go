@@ -8,10 +8,7 @@ import (
     "github.com/hyperledger/fabric/protos/peer"
 )
 
-/*
- * see:
- * https://github.com/diegomasini/hyperledger-fabric/blob/master/bddtests/chaincode/go/table/table.go
- */
+// Roughly follows the fabcar example
 
 /*
  * EnergyRecords implements a chaincode to record the energy production/

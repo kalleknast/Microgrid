@@ -120,20 +120,10 @@ and the last lines printed should look something like this:
 ```
 ### Peer-base and docker-compose
 
-Create a base directory for ```docker-compose-base.yaml``` and ```peer-base.yaml```.
-```
-$ mkdir base
-```
-
 ```
 $ docker-compose -f docker-compose-cli.yaml up -d
 ```
 
-Remove docker images:
-```
-$ docker rm -f $(docker ps -aq)
-$ docker rmi -f $(docker images -q)
-```
 The last few lines printed should look something like this:
 ```
 dde25187799d: Pull complete
@@ -153,12 +143,13 @@ Creating orderer.microgrid.org       ... done
 Creating peer0.house03.microgrid.org ... done
 Creating peer1.house05.microgrid.org ... done
 Creating cli                         ... done
+Creating chaincode                   ... done
 ```
 Start docker cli:
 ```
 $ docker start cli
 ```
-Enter inside the docker container:
+Enter the ```cli``` docker container:
 ```
 $ docker exec -it cli bash
 ```
@@ -168,14 +159,53 @@ Should look something like this:
 root@b411f1d6d95e:/opt/gopath/src/github.com/hyperledger/fabric/peer#
 ```
 
+To remove docker images:
+```
+$ docker rm -f $(docker ps -aq)
+$ docker rmi -f $(docker images -q)
+```
+
 ## chaincode
 
 Assumes you are in ```microgrid```
 ```
 $ cd chaincode/go/src
 ```
-Compile the chaincode
+Test compile the chaincode outside of a container
 ```
 $ go get -u github.com/hyperledger/fabric/core/chaincode/shim
 $ go build
+```
+
+Enter the ```chaincode``` docker container:
+```
+$ docker exec -it chaincode bash
+```
+
+Should looks something like this:
+```
+root@00c1cc5304ca:/opt/gopath/src/chaincode#
+```
+The location ```/opt/gopath/src/chaincode``` is set in ```docker-compose-cli.yaml```
+
+Change directory and check that the source chaincode is there:
+```
+# cd go/src
+# ls
+```
+You should see at least
+```
+CArecords.go
+```
+Compile the chaincode:
+```
+# go build
+```
+And run the chaincode:
+```
+# CORE_PEER_ADDRESS=peer0.house01.microgrid.org:7051 CORE_CHAINCODE_ID_NAME=cacc:0 ./src
+```
+
+```
+Error creating new Energy Record: error trying to connect to local peer: context deadline exceeded
 ```
