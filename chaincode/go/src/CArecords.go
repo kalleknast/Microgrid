@@ -1,28 +1,30 @@
-package margin
+package main
 
 import (
     "bytes"
-	"strconv"
     "encoding/json"
     "fmt"
     "github.com/hyperledger/fabric/core/chaincode/shim"
     "github.com/hyperledger/fabric/protos/peer"
 )
 
-// see:
-// https://github.com/diegomasini/hyperledger-fabric/blob/master/bddtests/chaincode/go/table/table.go
+/*
+ * see:
+ * https://github.com/diegomasini/hyperledger-fabric/blob/master/bddtests/chaincode/go/table/table.go
+ */
 
-
-// EnergyRecords implements a chaincode to record the energy production/
-// consumption of HAs. One record per house and time point
-// Thus,
-// to record (set) 3 args are needed:
-//      house id
-//      (date-time/incremental index -- can be retreived from the ledger, n+1)
-//      energy amount (+/-)
-// to read (get) 2 args are needed:
-//      house id
-//      date-time/incremental index
+/*
+ * EnergyRecords implements a chaincode to record the energy production/
+ * consumption of HAs. One record per house and time point
+ * Thus,
+ * to record (set) 3 args are needed:
+ *      house id
+ *      (date-time/incremental index -- can be retreived from the ledger, n+1)
+ *      energy amount (+/-)
+ * to read (get) 2 args are needed:
+ *      house id
+ *      date-time/incremental index
+ */
 type EnergyRecords struct {
 }
 
@@ -30,7 +32,7 @@ type EnergyRecords struct {
  * Define the structure for a single record, with 3 properties.
  * Structure tags are used by encoding/json library
  */
-type Records struct {
+type Record struct {
 	House   string `json:"house"`
 	Time  string `json:"time"`
 	Amount string `json:"amount"`
@@ -80,10 +82,10 @@ func (s *EnergyRecords) getRecord(APIstub shim.ChaincodeStubInterface, args []st
 func (s *EnergyRecords) appendRecord(APIstub shim.ChaincodeStubInterface, args []string) peer.Response {
 
 	if len(args) != 3 {
-		return shim.Error("Incorrect number of arguments. Expecting 3.
+		return shim.Error(`Incorrect number of arguments. Expecting 3.
                             1 -- House id\n
                             2 -- date and time\n
-                            3 -- energy amount")
+                            3 -- energy amount`)
 	}
 
 	var record = Record{House: args[1], Time: args[2], Amount: args[3]}
@@ -144,4 +146,14 @@ func (s *EnergyRecords) getAllRecords(APIstub shim.ChaincodeStubInterface) peer.
 	fmt.Printf("- getAllRecords:\n%s\n", buffer.String())
 
 	return shim.Success(buffer.Bytes())
+}
+
+// The main function is only relevant in unit test mode.
+func main() {
+
+	// Create a new Smart Contract
+	err := shim.Start(new(EnergyRecords))
+	if err != nil {
+		fmt.Printf("Error creating new Energy Record: %s", err)
+	}
 }
