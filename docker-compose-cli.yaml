@@ -185,13 +185,13 @@ services:
 
   chaincode:
       container_name: chaincode
-      image: hyperledger/fabric-ccenv
+      image: hyperledger/fabric-ccenv:latest
       tty: true
       environment:
         - GOPATH=/opt/gopath
         - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
         - CORE_LOGGING_LEVEL=DEBUG
-        - CORE_PEER_ID=example02
+        - CORE_PEER_ID=House01MSP
         - CORE_PEER_ADDRESS=peer0.house01.microgrid.org:7051
         - CORE_PEER_LOCALMSPID=House01MSP
         # - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp
@@ -218,3 +218,5 @@ services:
           - peer1.house05.microgrid.org
           - peer0.house06.microgrid.org
           - peer1.house06.microgrid.org
+      networks:
+          - mgn          
