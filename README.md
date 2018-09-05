@@ -177,6 +177,40 @@ $ go get -u github.com/hyperledger/fabric/core/chaincode/shim
 $ go build
 ```
 
+Install the chaincode
+```bash
+CC_SRC_PATH=chaincode/go/src
+docker exec -e "CORE_PEER_LOCALMSPID=House01MSP" -e "CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house01.microgrid.org/users/Admin@house01.microgrid.org/msp" cli peer chaincode install -n carecords -v 1.0 -p "$CC_SRC_PATH" -l golang
+```
+
+The last lines printed should be something like this:
+```bash
+2018-09-05 20:48:05.131 UTC [container] WriteFileToPackage -> DEBU 04e Writing file to tarball: src/chaincode/go/src/carecords.go
+2018-09-05 20:48:05.135 UTC [msp/identity] Sign -> DEBU 04f Sign: plaintext: 0ACA070A5B08031A0B088582C1DC0510...F7C67F020000FFFF6A084374001A0000
+2018-09-05 20:48:05.135 UTC [msp/identity] Sign -> DEBU 050 Sign: digest: 88E3BE1783D75457E36882431DCA4EDC77A7996F0C0BD3524E8DB208387A9B0B
+2018-09-05 20:48:05.137 UTC [chaincodeCmd] install -> INFO 051 Installed remotely response:<status:200 payload:"OK" >
+```
+
+Create the channel
+```bash
+docker exec -e "CORE_PEER_LOCALMSPID=House01MSP" -e "CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house01.microgrid.org/users/Admin@house01.microgrid.org/msp" peer0.house01.microgrid.org peer channel create -o orderer.microgrid.org:7050 -c hachannel -f /var/hyperledger/orderer/channel.tx
+```
+FAILS
+```bash
+2018-09-05 21:01:18.398 UTC [main] main -> ERRO 001 Cannot run peer because cannot init crypto, missing /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house01.microgrid.org/users/Admin@house01.microgrid.org/msp folder
+```
+Join peer0.house01.microgrid.org to the channel
+```bash
+docker exec -e "CORE_PEER_LOCALMSPID=House01MSP" -e "CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house01.microgrid.org/users/Admin@house01.microgrid.org/msp" peer0.house01.microgrid.org peer channel join -b hachannel.block
+```
+
+instantiate the chaincode in the channel (hachannel)
+```bash
+docker exec -e "CORE_PEER_LOCALMSPID=House01MSP" -e "CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house01.microgrid.org/users/Admin@house01.microgrid.org/msp" cli peer chaincode instantiate -o orderer.microgrid.org:7050 -C hachannel -n carecords
+ -l golang -v 1.0 -c '{"Args":[""]}' -P "OR ('House01MSP.member','House02MSP.member')"
+```
+
+<!--
 Enter the ```chaincode``` docker container:
 ```bash
 $ docker exec -it chaincode bash
@@ -206,15 +240,5 @@ And run the chaincode:
 # CORE_PEER_ADDRESS=peer0.house01.microgrid.org:7051 CORE_CHAINCODE_ID_NAME=cacc:0 ./src
 ```
 
-```
-Error creating new Energy Record: error trying to connect to local peer: context deadline exceeded
-```
-
-```bash
-LANGUAGE=${1:-"golang"}
-CC_SRC_PATH=chaincode/go/src
-# CC_SRC_PATH=/opt/gopath/src/chaincode/go/src
-docker exec -e "CORE_PEER_LOCALMSPID=House01MSP" -e "CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house01.microgrid.org/users/Admin@house01.microgrid.org/msp" cli peer chaincode install -n CArecords -v 1.0 -p "$CC_SRC_PATH" -l "$LANGUAGE"
-
-docker exec -e "CORE_PEER_LOCALMSPID=Org1MSP" -e "CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp" cli peer chaincode instantiate -o orderer.example.com:7050 -C mychannel -n fabcar -l "$LANGUAGE" -v 1.0 -c '{"Args":[""]}' -P "OR ('Org1MSP.member','Org2MSP.member')"
-```
+- ORDERER_GENERAL_GENESISFILE=/etc/hyperledger/configtx/genesis.block
+- ORDERER_GENERAL_GENESISFILE=/var/hyperledger/orderer/genesis.block -->

@@ -1,12 +1,16 @@
 # TODO list
 
 * [x] Set up basic network
-    - Single computer
-    - "solo" orderer
+    - [x] Single computer
+    - [x] "solo" orderer
 * [x] Write chaincode to record energy production and consumption
+    - [x] See that it compiles
+    - [x] install
+    - [ ] instantiate in a channel
+        - [ ] Add channel
+        - [ ] peer join
     - [ ] Make ```go build``` output something else than ```src```
-    - [ ] fix the error when trying to run the chaincode
-        - ```Error creating new Energy Record: error trying to connect to local peer: context deadline exceeded```
+    - [ ] See if the chaincode container in docker-compose-cli.yaml is neccessary
 * [ ] Node.js application write energy data to the contract
 * [ ] Write chaincode to bid and aggredate, Market Clearing Price (MCP) algorithm
 * [ ] Implementing the violation marketplace
