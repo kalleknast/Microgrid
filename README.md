@@ -51,6 +51,23 @@ export PATH=<path to download location>/fabric-samples/bin:$PATH
 
 ## Set up the network
 
+### Quick
+Configure
+```bash
+./configure
+```
+Start
+```bash
+./start
+```
+
+Stop
+```bash
+./stop
+```
+
+### Step-by-step
+
 ```bash
 $ ../bin/cryptogen generate --config crypto-config.yaml --output=crypto-config
 ```
@@ -67,7 +84,7 @@ house06.microgrid.org
 
 and a directory called ```crypto-config``` should created.
 
-### Create the orderer genesis block, channel configuration transaction and the anchor peer transactions, one for each peer organisation
+#### Create the orderer genesis block, channel configuration transaction and the anchor peer transactions, one for each peer organisation
 
 The ```configtxgen``` command doesn't automatically create the ```channel-artifacts``` directory.
 Do it manually.
@@ -75,7 +92,7 @@ Do it manually.
 $ mkdir channel-artifacts
 ```
 
-#### Genesis block:
+##### Genesis block:
 ```bash
 $ ../bin/configtxgen -profile OrdererGenesis -outputBlock ./channel-artifacts/genesis.block
 ```
@@ -85,7 +102,7 @@ The last line printed should look something like:
 2018-08-21 17:26:31.191 EDT [common/tools/configtxgen] doOutputBlock -> INFO 013 Writing genesis block
 ```
 
-#### Channel configuration transaction:
+##### Channel configuration transaction:
 ```bash
 $ ../bin/configtxgen -profile hachannel -outputCreateChannelTx ./channel-artifacts/channel.tx -channelID hachannel
 ```
@@ -94,7 +111,7 @@ $ ../bin/configtxgen -profile hachannel -outputCreateChannelTx ./channel-artifac
 2018-08-24 14:38:49.079 EDT [common/tools/configtxgen] doOutputChannelCreateTx -> INFO 010 Writing new channel tx
 ```
 
-#### Anchor peer transactions:
+##### Anchor peer transactions:
 ```bash
 $ ../bin/configtxgen -profile hachannel -outputAnchorPeersUpdate ./channel-artifacts/House01Anchor.tx -channelID hachannel -asOrg House01MSP
 
@@ -116,7 +133,7 @@ and the last lines printed should look something like this:
 2018-08-24 14:46:37.499 EDT [common/tools/configtxgen] doOutputAnchorPeersUpdate -> INFO 002 Generating anchor peer update
 2018-08-24 14:46:37.499 EDT [common/tools/configtxgen] doOutputAnchorPeersUpdate -> INFO 003 Writing anchor peer update
 ```
-### Peer-base and docker-compose
+#### Peer-base and docker-compose
 
 ```bash
 $ docker-compose -f docker-compose-cli.yaml up -d
@@ -157,8 +174,9 @@ Should look something like this:
 root@b411f1d6d95e:/opt/gopath/src/github.com/hyperledger/fabric/peer#
 ```
 
-To remove docker images:
+#### Stop network and remove docker images
 ```bash
+$ docker-compose -f docker-compose-cli.yaml down --volumes
 $ docker rm -f $(docker ps -aq)
 $ docker rmi -f $(docker images -q)
 ```
