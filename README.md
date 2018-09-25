@@ -189,7 +189,7 @@ The last lines printed should be something like this:
 2018-09-05 20:48:05.137 UTC [chaincodeCmd] install -> INFO 051 Installed remotely response:<status:200 payload:"OK" >
 ```
 
-**** Create the channel
+### Create the channel
 
 First enter the cli:
 ```
@@ -204,6 +204,8 @@ Alternatively, without entering the cli
 ```bash
 ??
 ```
+
+### Join peer to the channel
 
 Join peer0.house01.microgrid.org to the channel
 ```bash
