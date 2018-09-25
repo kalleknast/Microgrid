@@ -9,7 +9,7 @@ services:
       - ORDERER_GENERAL_LOGLEVEL=INFO
       - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
       - ORDERER_GENERAL_GENESISMETHOD=file
-      - ORDERER_GENERAL_GENESISFILE=/var/hyperledger/orderer/genesis.block
+      - ORDERER_GENERAL_GENESISFILE=/var/hyperledger/orderer/orderer.genesis.block
       - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
       - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp
       # enabled TLS
@@ -51,7 +51,7 @@ services:
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
     command: peer node start
-    # command: peer node start --peer-chaincodedev=true  
+    # command: peer node start --peer-chaincodedev=true
     volumes:
         - /var/run/:/host/var/run/
         - ../crypto-config/peerOrganizations/house01.microgrid.org/peers/peer0.house01.microgrid.org/msp:/etc/hyperledger/fabric/msp

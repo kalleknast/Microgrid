@@ -87,7 +87,7 @@ The last line printed should look something like:
 
 #### Channel configuration transaction:
 ```bash
-$ ../bin/configtxgen -profile mg_channel -outputCreateChannelTx ./channel-artifacts/channel.tx -channelID mg_channel
+$ ../bin/configtxgen -profile hachannel -outputCreateChannelTx ./channel-artifacts/channel.tx -channelID hachannel
 ```
 ```channel.tx``` should be created in ```channel-artifacts``` and the last line printed should look something like this:
 ```
@@ -96,17 +96,17 @@ $ ../bin/configtxgen -profile mg_channel -outputCreateChannelTx ./channel-artifa
 
 #### Anchor peer transactions:
 ```bash
-$ ../bin/configtxgen -profile mg_channel -outputAnchorPeersUpdate ./channel-artifacts/House01Anchor.tx -channelID mg_channel -asOrg House01MSP
+$ ../bin/configtxgen -profile hachannel -outputAnchorPeersUpdate ./channel-artifacts/House01Anchor.tx -channelID hachannel -asOrg House01MSP
 
-$ ../bin/configtxgen -profile mg_channel -outputAnchorPeersUpdate ./channel-artifacts/House02Anchor.tx -channelID mg_channel -asOrg House02MSP
+$ ../bin/configtxgen -profile hachannel -outputAnchorPeersUpdate ./channel-artifacts/House02Anchor.tx -channelID hachannel -asOrg House02MSP
 
-$ ../bin/configtxgen -profile mg_channel -outputAnchorPeersUpdate ./channel-artifacts/House03Anchor.tx -channelID mg_channel -asOrg House03MSP
+$ ../bin/configtxgen -profile hachannel -outputAnchorPeersUpdate ./channel-artifacts/House03Anchor.tx -channelID hachannel -asOrg House03MSP
 
-$ ../bin/configtxgen -profile mg_channel -outputAnchorPeersUpdate ./channel-artifacts/House04Anchor.tx -channelID mg_channel -asOrg House04MSP
+$ ../bin/configtxgen -profile hachannel -outputAnchorPeersUpdate ./channel-artifacts/House04Anchor.tx -channelID hachannel -asOrg House04MSP
 
-$ ../bin/configtxgen -profile mg_channel -outputAnchorPeersUpdate ./channel-artifacts/House05Anchor.tx -channelID mg_channel -asOrg House05MSP
+$ ../bin/configtxgen -profile hachannel -outputAnchorPeersUpdate ./channel-artifacts/House05Anchor.tx -channelID hachannel -asOrg House05MSP
 
-$ ../bin/configtxgen -profile mg_channel -outputAnchorPeersUpdate ./channel-artifacts/House06Anchor.tx -channelID mg_channel -asOrg House06MSP
+$ ../bin/configtxgen -profile hachannel -outputAnchorPeersUpdate ./channel-artifacts/House06Anchor.tx -channelID hachannel -asOrg House06MSP
 ```
 
 ```House01Anchor.tx```, ```House02Anchor.tx``` ... should be located in ```channel-artifacts```
@@ -190,42 +190,33 @@ The last lines printed should be something like this:
 ```
 
 **** Create the channel
-Enter cli
-```bash
-docker exec -it cli bash
+
+First enter the cli:
 ```
-Create the channel
+docker exec -it cli bash # Enter the cli
+```
+and then create the channel:
 ```bash
-export CHANNEL_NAME=mg_channel
-peer channel create -o orderer.microgrid:7050 -c $CHANNEL_NAME -f ./channel-artifacts/channel.tx --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/microgrid.org/orderers/orderer.microgrid.org/msp/tlscacerts/tlsca.microgrid.org-cert.pem
+export CHANNEL_NAME=hachannel
+peer channel create -o orderer.microgrid.org:7050 -c $CHANNEL_NAME -f ./channel-artifacts/channel.tx --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/microgrid.org/orderers/orderer.microgrid.org/msp/tlscacerts/tlsca.microgrid.org-cert.pem
+```
+Alternatively, without entering the cli
+```bash
+??
 ```
 
-ERROR:
-```bash
-2018-09-25 01:03:22.555 UTC [grpc] Printf -> DEBU 03b ClientConn switching balancer to "pick_first"
-2018-09-25 01:03:22.555 UTC [grpc] Printf -> DEBU 03c pickfirstBalancer: HandleSubConnStateChange: 0xc4205f6ac0, CONNECTING
-2018-09-25 01:03:22.757 UTC [grpc] Printf -> DEBU 03d grpc: addrConn.createTransport failed to connect to {orderer.microgrid:7050 0  <nil>}. Err :connection error: desc = "transport: Error while dialing dial tcp: lookup orderer.microgrid on 127.0.0.11:53: no such host". Reconnecting...
-2018-09-25 01:03:22.757 UTC [grpc] Printf -> DEBU 03e pickfirstBalancer: HandleSubConnStateChange: 0xc4205f6ac0, TRANSIENT_FAILURE
-2018-09-25 01:03:23.555 UTC [grpc] Printf -> DEBU 03f pickfirstBalancer: HandleSubConnStateChange: 0xc4205f6ac0, CONNECTING
-2018-09-25 01:03:23.612 UTC [grpc] Printf -> DEBU 040 grpc: addrConn.createTransport failed to connect to {orderer.microgrid:7050 0  <nil>}. Err :connection error: desc = "transport: Error while dialing dial tcp: lookup orderer.microgrid on 127.0.0.11:53: no such host". Reconnecting...
-2018-09-25 01:03:23.613 UTC [grpc] Printf -> DEBU 041 pickfirstBalancer: HandleSubConnStateChange: 0xc4205f6ac0, TRANSIENT_FAILURE
-2018-09-25 01:03:24.877 UTC [grpc] Printf -> DEBU 042 pickfirstBalancer: HandleSubConnStateChange: 0xc4205f6ac0, CONNECTING
-2018-09-25 01:03:24.916 UTC [grpc] Printf -> DEBU 043 grpc: addrConn.createTransport failed to connect to {orderer.microgrid:7050 0  <nil>}. Err :connection error: desc = "transport: Error while dialing dial tcp: lookup orderer.microgrid on 127.0.0.11:53: no such host". Reconnecting...
-2018-09-25 01:03:24.916 UTC [grpc] Printf -> DEBU 044 pickfirstBalancer: HandleSubConnStateChange: 0xc4205f6ac0, TRANSIENT_FAILURE
-Error: failed to create deliver client: orderer client failed to connect to orderer.microgrid:7050: failed to create new connection: context deadline exceeded
-```
-
-
-```bash
-docker exec -e "CORE_PEER_LOCALMSPID=House01MSP" -e "CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house01.microgrid.org/users/Admin@house01.microgrid.org/msp" peer0.house01.microgrid.org peer channel create -o orderer.microgrid.org:7050 -c hachannel -f /var/hyperledger/orderer/channel.tx
-```
-FAILS
-```bash
-2018-09-05 21:01:18.398 UTC [main] main -> ERRO 001 Cannot run peer because cannot init crypto, missing /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house01.microgrid.org/users/Admin@house01.microgrid.org/msp folder
-```
 Join peer0.house01.microgrid.org to the channel
 ```bash
 docker exec -e "CORE_PEER_LOCALMSPID=House01MSP" -e "CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house01.microgrid.org/users/Admin@house01.microgrid.org/msp" peer0.house01.microgrid.org peer channel join -b hachannel.block
+```
+ERROR!
+```bash
+2018-09-25 22:32:58.573 UTC [main] InitCmd -> ERRO 001 Cannot run peer because cannot init crypto, folder "/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house01.microgrid.org/users/Admin@house01.microgrid.org/msp" does not exist
+```
+However, if I enter cli, I can cd to the folder, i.e.:
+```bash
+# works fine:
+cd /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house01.microgrid.org/users/Admin@house01.microgrid.org/msp
 ```
 
 instantiate the chaincode in the channel (hachannel)

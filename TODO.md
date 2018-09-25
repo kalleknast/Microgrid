@@ -7,7 +7,7 @@
     - [x] See that it compiles
     - [x] install
     - [ ] instantiate in a channel
-        - [ ] Add channel
+        - [x] Add channel
         - [ ] peer join
     - [ ] Make ```go build``` output something else than ```src```
     - [ ] See if the chaincode container in docker-compose-cli.yaml is neccessary
