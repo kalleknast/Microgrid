@@ -247,6 +247,13 @@ Instantiate the chaincode in the channel (hachannel)
 docker exec -e "CORE_PEER_LOCALMSPID=House01MSP" -e "CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house01.microgrid.org/users/Admin@house01.microgrid.org/msp" cli peer chaincode instantiate -o orderer.microgrid.org:7050 -C hachannel -n carecords -l golang -v 1.0 -c '{"Args":[""]}' -P "OR ('House01MSP.member','House02MSP.member')"
 ```
 
+Fails with:
+```
+2018-09-29 02:24:30.947 UTC [grpc] HandleSubConnStateChange -> DEBU 074 pickfirstBalancer: HandleSubConnStateChange: 0xc420412ef0, CONNECTING
+2018-09-29 02:24:30.947 UTC [grpc] HandleSubConnStateChange -> DEBU 075 pickfirstBalancer: HandleSubConnStateChange: 0xc420412ef0, TRANSIENT_FAILURE
+Error: could not assemble transaction, err proposal response was not successful, error code 500, msg error starting container: error starting container: Get https://registry-1.docker.io/v2/: net/http: request canceled while waiting for connection (Client.Timeout exceeded while awaiting headers)
+```
+
 <!--
 Enter the ```chaincode``` docker container:
 ```bash
