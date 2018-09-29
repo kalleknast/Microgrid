@@ -181,7 +181,41 @@ $ docker rm -f $(docker ps -aq)
 $ docker rmi -f $(docker images -q)
 ```
 
-## chaincode
+
+## Create the channel
+
+First enter the cli:
+```
+docker exec -it cli bash # Enter the cli
+```
+and then create the channel:
+```bash
+export CHANNEL_NAME=hachannel
+peer channel create -o orderer.microgrid.org:7050 -c $CHANNEL_NAME -f ./channel-artifacts/channel.tx --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/microgrid.org/orderers/orderer.microgrid.org/msp/tlscacerts/tlsca.microgrid.org-cert.pem
+```
+Alternatively, without entering the cli
+```bash
+docker exec -ti cli sh -c "peer channel create -o orderer.microgrid.org:7050 -c hachannel -f ./channel-artifacts/channel.tx --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/microgrid.org/orderers/orderer.microgrid.org/msp/tlscacerts/tlsca.microgrid.org-cert.pem"
+```
+
+## Join peer to the channel
+
+Join peer0.house01.microgrid.org to the channel
+
+From the cli:
+```bash
+CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house01.microgrid.org/users/Admin@house01.microgrid.org/msp CORE_PEER_ADDRESS=peer0.house01.microgrid.org:7051 CORE_PEER_LOCALMSPID="House01MSP" CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house01.microgrid.org/peers/peer0.house01.microgrid.org/tls/ca.crt peer channel join -b hachannel.block
+
+CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house01.microgrid.org/users/Admin@house01.microgrid.org/msp CORE_PEER_ADDRESS=peer1.house01.microgrid.org:7051 CORE_PEER_LOCALMSPID="House01MSP" CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house01.microgrid.org/peers/peer1.house01.microgrid.org/tls/ca.crt peer channel join -b hachannel.block
+```
+
+Without entering the cli:
+```bash
+docker exec -ti cli sh -c 'CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house01.microgrid.org/users/Admin@house01.microgrid.org/msp CORE_PEER_ADDRESS=peer0.house01.microgrid.org:7051 CORE_PEER_LOCALMSPID="House01MSP"
+CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house01.microgrid.org/peers/peer0.house01.microgrid.org/tls/ca.crt peer channel join -b hachannel.block'
+```
+
+## Chaincode
 
 Assumes you are in ```microgrid```
 ```bash
@@ -207,42 +241,10 @@ The last lines printed should be something like this:
 2018-09-05 20:48:05.137 UTC [chaincodeCmd] install -> INFO 051 Installed remotely response:<status:200 payload:"OK" >
 ```
 
-### Create the channel
 
-First enter the cli:
-```
-docker exec -it cli bash # Enter the cli
-```
-and then create the channel:
+Instantiate the chaincode in the channel (hachannel)
 ```bash
-export CHANNEL_NAME=hachannel
-peer channel create -o orderer.microgrid.org:7050 -c $CHANNEL_NAME -f ./channel-artifacts/channel.tx --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/microgrid.org/orderers/orderer.microgrid.org/msp/tlscacerts/tlsca.microgrid.org-cert.pem
-```
-Alternatively, without entering the cli
-```bash
-??
-```
-
-### Join peer to the channel
-
-Join peer0.house01.microgrid.org to the channel
-```bash
-docker exec -e "CORE_PEER_LOCALMSPID=House01MSP" -e "CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house01.microgrid.org/users/Admin@house01.microgrid.org/msp" peer0.house01.microgrid.org peer channel join -b hachannel.block
-```
-ERROR!
-```bash
-2018-09-25 22:32:58.573 UTC [main] InitCmd -> ERRO 001 Cannot run peer because cannot init crypto, folder "/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house01.microgrid.org/users/Admin@house01.microgrid.org/msp" does not exist
-```
-However, if I enter cli, I can cd to the folder, i.e.:
-```bash
-# works fine:
-cd /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house01.microgrid.org/users/Admin@house01.microgrid.org/msp
-```
-
-instantiate the chaincode in the channel (hachannel)
-```bash
-docker exec -e "CORE_PEER_LOCALMSPID=House01MSP" -e "CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house01.microgrid.org/users/Admin@house01.microgrid.org/msp" cli peer chaincode instantiate -o orderer.microgrid.org:7050 -C hachannel -n carecords
- -l golang -v 1.0 -c '{"Args":[""]}' -P "OR ('House01MSP.member','House02MSP.member')"
+docker exec -e "CORE_PEER_LOCALMSPID=House01MSP" -e "CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house01.microgrid.org/users/Admin@house01.microgrid.org/msp" cli peer chaincode instantiate -o orderer.microgrid.org:7050 -C hachannel -n carecords -l golang -v 1.0 -c '{"Args":[""]}' -P "OR ('House01MSP.member','House02MSP.member')"
 ```
 
 <!--
