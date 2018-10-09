@@ -12,6 +12,8 @@ services:
       - ORDERER_GENERAL_GENESISFILE=/var/hyperledger/orderer/orderer.genesis.block
       - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
       - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp
+
+
       # enabled TLS
       - ORDERER_GENERAL_TLS_ENABLED=true
       - ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
@@ -42,14 +44,7 @@ services:
       # # the following setting starts chaincode containers on the same
       # # bridge network as the peers
       # # https://docs.docker.com/compose/networking/
-      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=microgrid_net
-      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
-      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb:5984
-      # The CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME and CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD
-      # provide the credentials for ledger to connect to CouchDB.  The username and password must
-      # match the username and password set for the associated CouchDB.
-      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
-      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
+
     command: peer node start
     # command: peer node start --peer-chaincodedev=true
     volumes:
@@ -60,6 +55,8 @@ services:
     ports:
       - 7051:7051
       - 7053:7053
+
+
 
   peer1.house01.microgrid.org:
     container_name: peer1.house01.microgrid.org
@@ -72,19 +69,12 @@ services:
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.house01.microgrid.org:7051
       - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.house01.microgrid.org:7051
       - CORE_PEER_LOCALMSPID=House01MSP
-      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
-      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb:5984
-      # The CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME and CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD
-      # provide the credentials for ledger to connect to CouchDB.  The username and password must
-      # match the username and password set for the associated CouchDB.
-      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
-      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
+
     volumes:
         - /var/run/:/host/var/run/
         - ../crypto-config/peerOrganizations/house01.microgrid.org/peers/peer1.house01.microgrid.org/msp:/etc/hyperledger/fabric/msp
         - ../crypto-config/peerOrganizations/house01.microgrid.org/peers/peer1.house01.microgrid.org/tls:/etc/hyperledger/fabric/tls
         - peer1.house01.microgrid.org:/var/hyperledger/production
-
     ports:
       - 8051:7051
       - 8053:7053
@@ -100,13 +90,7 @@ services:
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.house02.microgrid.org:7051
       - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.house02.microgrid.org:7051
       - CORE_PEER_LOCALMSPID=House02MSP
-      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
-      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb:5984
-      # The CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME and CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD
-      # provide the credentials for ledger to connect to CouchDB.  The username and password must
-      # match the username and password set for the associated CouchDB.
-      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
-      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
+
     volumes:
         - /var/run/:/host/var/run/
         - ../crypto-config/peerOrganizations/house02.microgrid.org/peers/peer0.house02.microgrid.org/msp:/etc/hyperledger/fabric/msp
@@ -127,13 +111,7 @@ services:
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.house02.microgrid.org:7051
       - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.house02.microgrid.org:7051
       - CORE_PEER_LOCALMSPID=House02MSP
-      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
-      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb:5984
-      # The CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME and CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD
-      # provide the credentials for ledger to connect to CouchDB.  The username and password must
-      # match the username and password set for the associated CouchDB.
-      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
-      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
+
     volumes:
         - /var/run/:/host/var/run/
         - ../crypto-config/peerOrganizations/house02.microgrid.org/peers/peer1.house02.microgrid.org/msp:/etc/hyperledger/fabric/msp
@@ -154,13 +132,7 @@ services:
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.house03.microgrid.org:7051
       - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.house03.microgrid.org:7051
       - CORE_PEER_LOCALMSPID=House03MSP
-      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
-      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb:5984
-      # The CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME and CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD
-      # provide the credentials for ledger to connect to CouchDB.  The username and password must
-      # match the username and password set for the associated CouchDB.
-      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
-      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
+
     volumes:
         - /var/run/:/host/var/run/
         - ../crypto-config/peerOrganizations/house03.microgrid.org/peers/peer0.house03.microgrid.org/msp:/etc/hyperledger/fabric/msp
@@ -169,6 +141,8 @@ services:
     ports:
       - 11051:7051
       - 11053:7053
+
+
 
   peer1.house03.microgrid.org:
     container_name: peer1.house03.microgrid.org
@@ -181,13 +155,7 @@ services:
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.house03.microgrid.org:7051
       - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.house03.microgrid.org:7051
       - CORE_PEER_LOCALMSPID=House03MSP
-      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
-      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb:5984
-      # The CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME and CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD
-      # provide the credentials for ledger to connect to CouchDB.  The username and password must
-      # match the username and password set for the associated CouchDB.
-      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
-      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
+
     volumes:
         - /var/run/:/host/var/run/
         - ../crypto-config/peerOrganizations/house03.microgrid.org/peers/peer1.house03.microgrid.org/msp:/etc/hyperledger/fabric/msp
@@ -196,6 +164,8 @@ services:
     ports:
       - 12051:7051
       - 12053:7053
+
+
 
   peer0.house04.microgrid.org:
     container_name: peer0.house04.microgrid.org
@@ -208,13 +178,7 @@ services:
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.house04.microgrid.org:7051
       - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.house04.microgrid.org:7051
       - CORE_PEER_LOCALMSPID=House04MSP
-      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
-      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb:5984
-      # The CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME and CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD
-      # provide the credentials for ledger to connect to CouchDB.  The username and password must
-      # match the username and password set for the associated CouchDB.
-      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
-      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
+
     volumes:
         - /var/run/:/host/var/run/
         - ../crypto-config/peerOrganizations/house04.microgrid.org/peers/peer0.house04.microgrid.org/msp:/etc/hyperledger/fabric/msp
@@ -223,6 +187,7 @@ services:
     ports:
       - 13051:7051
       - 13053:7053
+
 
   peer1.house04.microgrid.org:
     container_name: peer1.house04.microgrid.org
@@ -235,13 +200,7 @@ services:
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.house04.microgrid.org:7051
       - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.house04.microgrid.org:7051
       - CORE_PEER_LOCALMSPID=House04MSP
-      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
-      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb:5984
-      # The CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME and CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD
-      # provide the credentials for ledger to connect to CouchDB.  The username and password must
-      # match the username and password set for the associated CouchDB.
-      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
-      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
+
     volumes:
         - /var/run/:/host/var/run/
         - ../crypto-config/peerOrganizations/house04.microgrid.org/peers/peer1.house04.microgrid.org/msp:/etc/hyperledger/fabric/msp
@@ -250,6 +209,7 @@ services:
     ports:
       - 14051:7051
       - 14053:7053
+
 
   peer0.house05.microgrid.org:
     container_name: peer0.house05.microgrid.org
@@ -262,13 +222,7 @@ services:
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.house05.microgrid.org:7051
       - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.house05.microgrid.org:7051
       - CORE_PEER_LOCALMSPID=House05MSP
-      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
-      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb:5984
-      # The CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME and CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD
-      # provide the credentials for ledger to connect to CouchDB.  The username and password must
-      # match the username and password set for the associated CouchDB.
-      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
-      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
+
     volumes:
         - /var/run/:/host/var/run/
         - ../crypto-config/peerOrganizations/house05.microgrid.org/peers/peer0.house05.microgrid.org/msp:/etc/hyperledger/fabric/msp
@@ -289,13 +243,7 @@ services:
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.house05.microgrid.org:7051
       - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.house05.microgrid.org:7051
       - CORE_PEER_LOCALMSPID=House05MSP
-      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
-      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb:5984
-      # The CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME and CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD
-      # provide the credentials for ledger to connect to CouchDB.  The username and password must
-      # match the username and password set for the associated CouchDB.
-      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
-      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
+
     volumes:
         - /var/run/:/host/var/run/
         - ../crypto-config/peerOrganizations/house05.microgrid.org/peers/peer1.house05.microgrid.org/msp:/etc/hyperledger/fabric/msp
@@ -316,13 +264,7 @@ services:
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.house06.microgrid.org:7051
       - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.house06.microgrid.org:7051
       - CORE_PEER_LOCALMSPID=House06MSP
-      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
-      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb:5984
-      # The CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME and CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD
-      # provide the credentials for ledger to connect to CouchDB.  The username and password must
-      # match the username and password set for the associated CouchDB.
-      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
-      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
+
     volumes:
         - /var/run/:/host/var/run/
         - ../crypto-config/peerOrganizations/house06.microgrid.org/peers/peer0.house06.microgrid.org/msp:/etc/hyperledger/fabric/msp
@@ -343,13 +285,7 @@ services:
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.house06.microgrid.org:7051
       - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.house06.microgrid.org:7051
       - CORE_PEER_LOCALMSPID=House06MSP
-      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
-      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb:5984
-      # The CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME and CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD
-      # provide the credentials for ledger to connect to CouchDB.  The username and password must
-      # match the username and password set for the associated CouchDB.
-      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
-      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
+
     volumes:
         - /var/run/:/host/var/run/
         - ../crypto-config/peerOrganizations/house06.microgrid.org/peers/peer1.house06.microgrid.org/msp:/etc/hyperledger/fabric/msp
@@ -358,3 +294,4 @@ services:
     ports:
       - 18051:7051
       - 18053:7053
+   
