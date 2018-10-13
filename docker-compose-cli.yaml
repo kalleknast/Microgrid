@@ -172,39 +172,39 @@ services:
     networks:
       - mgn
 
-  chaincode:
-      container_name: chaincode
-      image: hyperledger/fabric-ccenv:latest
-      tty: true
-      environment:
-        - GOPATH=/opt/gopath
-        - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
-        - CORE_LOGGING_LEVEL=DEBUG
-        - CORE_PEER_ID=House01MSP
-        - CORE_PEER_ADDRESS=peer0.house01.microgrid.org:7051
-        - CORE_PEER_LOCALMSPID=House01MSP
-        # - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp
-        - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house01.microgrid.org/users/Admin@house01.microgrid.org/msp
-      working_dir: /opt/gopath/src/chaincode
-      command: /bin/bash -c 'sleep 6000000'
-      volumes:
-          - /var/run/:/host/var/run/
-          - ./msp:/etc/hyperledger/msp
-          - ./../chaincode:/opt/gopath/src/chaincode
-          - ./chaincode:/opt/gopath/src/chaincode
-      depends_on:
-          - orderer.microgrid.org
-          - peer0.house01.microgrid.org
-          - peer1.house01.microgrid.org
-          - peer0.house02.microgrid.org
-          - peer1.house02.microgrid.org
-          - peer0.house03.microgrid.org
-          - peer1.house03.microgrid.org
-          - peer0.house04.microgrid.org
-          - peer1.house04.microgrid.org
-          - peer0.house05.microgrid.org
-          - peer1.house05.microgrid.org
-          - peer0.house06.microgrid.org
-          - peer1.house06.microgrid.org
-      networks:
-          - mgn          
+  # chaincode:
+  #     container_name: chaincode
+  #     image: hyperledger/fabric-ccenv:latest
+  #     tty: true
+  #     environment:
+  #       - GOPATH=/opt/gopath
+  #       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+  #       - CORE_LOGGING_LEVEL=DEBUG
+  #       - CORE_PEER_ID=House01MSP
+  #       - CORE_PEER_ADDRESS=peer0.house01.microgrid.org:7051
+  #       - CORE_PEER_LOCALMSPID=House01MSP
+  #       # - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp
+  #       - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house01.microgrid.org/users/Admin@house01.microgrid.org/msp
+  #     working_dir: /opt/gopath/src/chaincode
+  #     command: /bin/bash -c 'sleep 6000000'
+  #     volumes:
+  #         - /var/run/:/host/var/run/
+  #         - ./msp:/etc/hyperledger/msp
+  #         - ./../chaincode:/opt/gopath/src/chaincode
+  #         - ./chaincode:/opt/gopath/src/chaincode
+  #     depends_on:
+  #         - orderer.microgrid.org
+  #         - peer0.house01.microgrid.org
+  #         - peer1.house01.microgrid.org
+  #         - peer0.house02.microgrid.org
+  #         - peer1.house02.microgrid.org
+  #         - peer0.house03.microgrid.org
+  #         - peer1.house03.microgrid.org
+  #         - peer0.house04.microgrid.org
+  #         - peer1.house04.microgrid.org
+  #         - peer0.house05.microgrid.org
+  #         - peer1.house05.microgrid.org
+  #         - peer0.house06.microgrid.org
+  #         - peer1.house06.microgrid.org
+  #     networks:
+  #         - mgn          

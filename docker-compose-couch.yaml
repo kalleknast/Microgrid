@@ -8,6 +8,7 @@ services:
   couchdb01:
     container_name: couchdb01
     image: hyperledger/fabric-couchdb:latest
+    dns_search: .
     environment:
       - COUCHDB_USER=test
       - COUCHDB_PASSWORD=test
@@ -17,25 +18,31 @@ services:
       - mgn
 
   peer0.house01.microgrid.org:
-      environment:
-        - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
-        - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb01:5984
-        # The CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME and CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD
-        # provide the credentials for ledger to connect to CouchDB.  The username and password must
-        # match the username and password set for the associated CouchDB.
-        - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=test
-        - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=test
-      depends_on:
-        - couchdb01
+    environment:
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb01:5984
+      # The CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME and CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD
+      # provide the credentials for ledger to connect to CouchDB.  The username and password must
+      # match the username and password set for the associated CouchDB.
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=test
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=test
+      - CORE_PEER_ID=peer0.house01.microgrid.org
+      - CORE_PEER_ADDRESS=peer0.house01.microgrid.org:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.house01.microgrid.org:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.house01.microgrid.org:7051
+      - CORE_PEER_LOCALMSPID=House01MSP
+    depends_on:
+      - couchdb01
 
   couchdb11:
     container_name: couchdb11
     image: hyperledger/fabric-couchdb:latest
+    dns_search: .
     environment:
     # Populate the COUCHDB_USER and COUCHDB_PASSWORD to set an admin user and password
     # for CouchDB.  This will prevent CouchDB from operating in an "Admin Party" mode.   
-      - COUCHDB_USER=
-      - COUCHDB_PASSWORD=
+      - COUCHDB_USER=testtest
+      - COUCHDB_PASSWORD=testtest
     ports:
       - "6984:5984"
     networks:
@@ -48,14 +55,20 @@ services:
       # The CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME and CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD
       # provide the credentials for ledger to connect to CouchDB.  The username and password must
       # match the username and password set for the associated CouchDB.
-      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
-      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=testtest
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=testtest
+      - CORE_PEER_ID=peer1.house01.microgrid.org
+      - CORE_PEER_ADDRESS=peer1.house01.microgrid.org:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.house01.microgrid.org:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.house01.microgrid.org:7051
+      - CORE_PEER_LOCALMSPID=House01MSP
     depends_on:
       - couchdb11
 
   couchdb02:
     container_name: couchdb02
     image: hyperledger/fabric-couchdb:latest
+    dns_search: .
     environment:
     # Populate the COUCHDB_USER and COUCHDB_PASSWORD to set an admin user and password
     # for CouchDB.  This will prevent CouchDB from operating in an "Admin Party" mode.   
@@ -75,6 +88,11 @@ services:
       # match the username and password set for the associated CouchDB.
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=test
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=test
+      - CORE_PEER_ID=peer0.house02.microgrid.org
+      - CORE_PEER_ADDRESS=peer0.house02.microgrid.org:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.house02.microgrid.org:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.house02.microgrid.org:7051
+      - CORE_PEER_LOCALMSPID=House02MSP
     depends_on:
       - couchdb02
 
@@ -82,6 +100,7 @@ services:
   couchdb12:
     container_name: couchdb12
     image: hyperledger/fabric-couchdb:latest
+    dns_search: .
     environment:
     # Populate the COUCHDB_USER and COUCHDB_PASSWORD to set an admin user and password
     # for CouchDB.  This will prevent CouchDB from operating in an "Admin Party" mode.   
@@ -101,12 +120,18 @@ services:
       # match the username and password set for the associated CouchDB.
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=test
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=test
+      - CORE_PEER_ID=peer1.house02.microgrid.org
+      - CORE_PEER_ADDRESS=peer1.house02.microgrid.org:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.house02.microgrid.org:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.house02.microgrid.org:7051
+      - CORE_PEER_LOCALMSPID=House02MSP      
     depends_on:
       - couchdb12
 
   couchdb03:
     container_name: couchdb03
     image: hyperledger/fabric-couchdb:latest
+    dns_search: .
     environment:
     # Populate the COUCHDB_USER and COUCHDB_PASSWORD to set an admin user and password
     # for CouchDB.  This will prevent CouchDB from operating in an "Admin Party" mode.   
@@ -126,12 +151,18 @@ services:
       # match the username and password set for the associated CouchDB.
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=test
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=test
+      - CORE_PEER_ID=peer0.house03.microgrid.org
+      - CORE_PEER_ADDRESS=peer0.house03.microgrid.org:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.house03.microgrid.org:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.house03.microgrid.org:7051
+      - CORE_PEER_LOCALMSPID=House03MSP      
     depends_on:
       - couchdb03
 
   couchdb13:
     container_name: couchdb13
     image: hyperledger/fabric-couchdb:latest
+    dns_search: .
     environment:
     # Populate the COUCHDB_USER and COUCHDB_PASSWORD to set an admin user and password
     # for CouchDB.  This will prevent CouchDB from operating in an "Admin Party" mode.   
@@ -151,12 +182,18 @@ services:
       # match the username and password set for the associated CouchDB.
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=test
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=test
+      - CORE_PEER_ID=peer1.house03.microgrid.org
+      - CORE_PEER_ADDRESS=peer1.house03.microgrid.org:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.house03.microgrid.org:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.house03.microgrid.org:7051
+      - CORE_PEER_LOCALMSPID=House03MSP      
     depends_on:
       - couchdb13
 
   couchdb04:
     container_name: couchdb04
     image: hyperledger/fabric-couchdb:latest
+    dns_search: .
     environment:
     # Populate the COUCHDB_USER and COUCHDB_PASSWORD to set an admin user and password
     # for CouchDB.  This will prevent CouchDB from operating in an "Admin Party" mode.   
@@ -176,6 +213,11 @@ services:
       # match the username and password set for the associated CouchDB.
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=test
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=test
+      - CORE_PEER_ID=peer0.house04.microgrid.org
+      - CORE_PEER_ADDRESS=peer0.house04.microgrid.org:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.house04.microgrid.org:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.house04.microgrid.org:7051
+      - CORE_PEER_LOCALMSPID=House04MSP      
     depends_on:
       - couchdb04
 
@@ -183,6 +225,7 @@ services:
   couchdb14:
     container_name: couchdb14
     image: hyperledger/fabric-couchdb:latest
+    dns_search: .
     environment:
     # Populate the COUCHDB_USER and COUCHDB_PASSWORD to set an admin user and password
     # for CouchDB.  This will prevent CouchDB from operating in an "Admin Party" mode.   
@@ -203,6 +246,11 @@ services:
       # match the username and password set for the associated CouchDB.
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=test
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=test
+      - CORE_PEER_ID=peer1.house04.microgrid.org
+      - CORE_PEER_ADDRESS=peer1.house04.microgrid.org:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.house04.microgrid.org:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.house04.microgrid.org:7051
+      - CORE_PEER_LOCALMSPID=House04MSP
     depends_on:
       - couchdb14
 
@@ -210,6 +258,7 @@ services:
   couchdb05:
     container_name: couchdb05
     image: hyperledger/fabric-couchdb:latest
+    dns_search: .
     environment:
     # Populate the COUCHDB_USER and COUCHDB_PASSWORD to set an admin user and password
     # for CouchDB.  This will prevent CouchDB from operating in an "Admin Party" mode.   
@@ -229,6 +278,11 @@ services:
       # match the username and password set for the associated CouchDB.
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=test
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=test
+      - CORE_PEER_ID=peer0.house05.microgrid.org
+      - CORE_PEER_ADDRESS=peer0.house05.microgrid.org:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.house05.microgrid.org:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.house05.microgrid.org:7051
+      - CORE_PEER_LOCALMSPID=House05MSP
     depends_on:
       - couchdb05
 
@@ -236,6 +290,7 @@ services:
   couchdb15:
     container_name: couchdb15
     image: hyperledger/fabric-couchdb:latest
+    dns_search: .
     environment:
     # Populate the COUCHDB_USER and COUCHDB_PASSWORD to set an admin user and password
     # for CouchDB.  This will prevent CouchDB from operating in an "Admin Party" mode.   
@@ -255,6 +310,11 @@ services:
       # match the username and password set for the associated CouchDB.
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=test
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=test
+      - CORE_PEER_ID=peer1.house05.microgrid.org
+      - CORE_PEER_ADDRESS=peer1.house05.microgrid.org:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.house05.microgrid.org:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.house05.microgrid.org:7051
+      - CORE_PEER_LOCALMSPID=House05MSP
     depends_on:
       - couchdb15
 
@@ -262,6 +322,7 @@ services:
   couchdb06:
     container_name: couchdb06
     image: hyperledger/fabric-couchdb:latest
+    dns_search: .
     environment:
     # Populate the COUCHDB_USER and COUCHDB_PASSWORD to set an admin user and password
     # for CouchDB.  This will prevent CouchDB from operating in an "Admin Party" mode.   
@@ -281,12 +342,18 @@ services:
       # match the username and password set for the associated CouchDB.
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=test
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=test
+      - CORE_PEER_ID=peer0.house06.microgrid.org
+      - CORE_PEER_ADDRESS=peer0.house06.microgrid.org:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.house06.microgrid.org:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.house06.microgrid.org:7051
+      - CORE_PEER_LOCALMSPID=House06MSP
     depends_on:
       - couchdb06
 
   couchdb16:
     container_name: couchdb16
     image: hyperledger/fabric-couchdb:latest
+    dns_search: .
     environment:
     # Populate the COUCHDB_USER and COUCHDB_PASSWORD to set an admin user and password
     # for CouchDB.  This will prevent CouchDB from operating in an "Admin Party" mode.   
@@ -306,6 +373,11 @@ services:
       # match the username and password set for the associated CouchDB.
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=test
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=test
+      - CORE_PEER_ID=peer1.house06.microgrid.org
+      - CORE_PEER_ADDRESS=peer1.house06.microgrid.org:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.house06.microgrid.org:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.house06.microgrid.org:7051
+      - CORE_PEER_LOCALMSPID=House06MSP
     depends_on:
       - couchdb16
 
