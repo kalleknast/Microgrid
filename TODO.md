@@ -10,7 +10,8 @@
         - [x] Add channel
         - [x] peer join
     - [ ] Make ```go build``` output something else than ```src```
-    - [ ] See if the chaincode container in docker-compose-cli.yaml is neccessary
+    - [x] See if the chaincode container in docker-compose-cli.yaml is neccessary
+          *Conclusion*: **removed**
 * [ ] Node.js application write energy data to the contract
 * [ ] Write chaincode to bid and aggredate, Market Clearing Price (MCP) algorithm
 * [ ] Implementing the violation marketplace
