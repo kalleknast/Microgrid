@@ -4,6 +4,12 @@ ARTIFACT_DIR="./channel-artifacts"
 CRYPTO_DIR="./crypto-config"
 CHANNEL_NAME=hachannel
 
+#!/bin/bash
+echo "Deleting old configs"
+docker-compose -f docker-compose-cli.yaml -f docker-compose-couch.yaml down --volumes
+docker rm -f $(docker ps -aq)
+docker rmi -f $(docker images -q)
+
 if [ ! -d "$ARTIFACT_DIR" ]; then
     echo 'Making directory "channel-artifacts"'
     mkdir channel-artifacts
@@ -15,7 +21,7 @@ fi
 
 if [ -d "$CRYPTO_DIR" ]; then
     echo 'Removing contents of directory "crypto-config"'
-    rm -rf $CRYPTO_DIR/*
+    rm -rf $CRYPTO_DIR
 fi
 
 ../bin/cryptogen generate --config crypto-config.yaml --output=crypto-config
