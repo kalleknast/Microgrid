@@ -6,9 +6,9 @@
 * [x] Write chaincode to record energy production and consumption
     - [x] See that it compiles
     - [x] install
-    - [ ] instantiate in a channel
+    - [x] instantiate in a channel
         - [x] Add channel
-        - [ ] peer join
+        - [x] peer join
     - [ ] Make ```go build``` output something else than ```src```
     - [ ] See if the chaincode container in docker-compose-cli.yaml is neccessary
 * [ ] Node.js application write energy data to the contract
