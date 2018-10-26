@@ -20,6 +20,14 @@ networks:
 
 services:
 
+  ca.microgrid.org:
+    container_name: ca.microgrid.org  
+    extends:
+      file:   base/docker-compose-base.yaml
+      service: ca.microgrid.org
+    networks:
+      - mgn # Micro Grid Network
+
   orderer.microgrid.org:
     extends:
       file:   base/docker-compose-base.yaml
@@ -207,4 +215,4 @@ services:
   #         - peer0.house06.microgrid.org
   #         - peer1.house06.microgrid.org
   #     networks:
-  #         - mgn          
+  #         - mgn

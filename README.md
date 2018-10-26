@@ -254,6 +254,24 @@ Instantiate the chaincode in the channel (hachannel)
 docker exec -ti cli sh -c "peer chaincode instantiate -o orderer.microgrid.org:7050 --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/microgrid.org/orderers/orderer.microgrid.org/msp/tlscacerts/tlsca.microgrid.org-cert.pem -C hachannel -n carecords -v 1.0 -c '{\"Args\":[\"init\",\"a\", \"100\", \"b\",\"200\"]}' -P \"OR ('House01MSP.member','House02MSP.member')\""
 ```
 
+## Application
+
+### Install the node dependencies
+Run in the microgrid directory.
+```bash
+$ npm install
+```
+
+### Enroll admin
+```bash
+node enrollAdmin.js
+```
+
+### Register user1 (should be affiliated with house01 but not org1.department1)
+```bash
+node registerUser.js
+```
+
 <!--
 Enter the ```chaincode``` docker container:
 ```bash
