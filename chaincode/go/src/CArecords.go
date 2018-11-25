@@ -1,11 +1,12 @@
 package main
 
 import (
-    "bytes"
-    "encoding/json"
-    "fmt"
-    "github.com/hyperledger/fabric/core/chaincode/shim"
-    "github.com/hyperledger/fabric/protos/peer"
+	"bytes"
+	"encoding/json"
+	"fmt"
+
+	"github.com/hyperledger/fabric/core/chaincode/shim"
+	"github.com/hyperledger/fabric/protos/peer"
 )
 
 // Roughly follows the fabcar example
@@ -30,8 +31,8 @@ type EnergyRecords struct {
  * Structure tags are used by encoding/json library
  */
 type Record struct {
-	House   string `json:"house"`
-	Time  string `json:"time"`
+	House  string `json:"house"`
+	Time   string `json:"time"`
 	Amount string `json:"amount"`
 }
 
@@ -48,7 +49,7 @@ func (s *EnergyRecords) Init(APIstub shim.ChaincodeStubInterface) peer.Response 
  * chaincode TODO name.
  * The calling application program has also specified the particular
   * chaincode function to be called, with arguments
- */
+*/
 func (s *EnergyRecords) Invoke(APIstub shim.ChaincodeStubInterface) peer.Response {
 
 	// Retrieve the requested Smart Contract function and arguments
@@ -72,7 +73,18 @@ func (s *EnergyRecords) getRecord(APIstub shim.ChaincodeStubInterface, args []st
 		return shim.Error("Incorrect number of arguments. Expecting 1")
 	}
 
-	recordAsBytes, _ := APIstub.GetState(args[0])
+	recordAsBytes, err := APIstub.GetState(args[0])
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+	//---------------------------for testing purpose
+	Record := Record{}
+
+	//umarshal the data to a new record struct
+	json.Unmarshal(recordAsBytes, &Record)
+	fmt.Println(Record)
+
+	//---------------------------
 	return shim.Success(recordAsBytes)
 }
 
@@ -84,8 +96,8 @@ func (s *EnergyRecords) appendRecord(APIstub shim.ChaincodeStubInterface, args [
                             2 -- date and time\n
                             3 -- energy amount`)
 	}
-
-	var record = Record{House: args[1], Time: args[2], Amount: args[3]}
+	//----------------------------------changed the indexing-------------------------
+	var record = Record{House: args[0], Time: args[1], Amount: args[2]}
 
 	recordAsBytes, _ := json.Marshal(record)
 	APIstub.PutState(args[0], recordAsBytes)
@@ -96,14 +108,14 @@ func (s *EnergyRecords) appendRecord(APIstub shim.ChaincodeStubInterface, args [
 // getAllRecords chaincode function - requires no arguments , ex: args: [''],
 func (s *EnergyRecords) getAllRecords(APIstub shim.ChaincodeStubInterface) peer.Response {
 
-    /*
-     * GetStateByRange returns a range iterator over a set of keys in the
-     * ledger. The iterator can be used to iterate over all keys
-     * between the startKey (inclusive) and endKey (exclusive).
-     * The keys are returned by the iterator in lexical order.
-     * Note that startKey and endKey can be empty string, which implies
-     * unbounded range query on start or end.
-     */
+	/*
+	 * GetStateByRange returns a range iterator over a set of keys in the
+	 * ledger. The iterator can be used to iterate over all keys
+	 * between the startKey (inclusive) and endKey (exclusive).
+	 * The keys are returned by the iterator in lexical order.
+	 * Note that startKey and endKey can be empty string, which implies
+	 * unbounded range query on start or end.
+	 */
 	startKey := ""
 	endKey := ""
 
