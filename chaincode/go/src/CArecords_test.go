@@ -8,7 +8,6 @@ import (
 )
 
 /*
-* TestInvokeInitVehiclePart simulates an initVehiclePart transaction on the CarDemo chaincode
  */
 
 func Test_CheckInit(t *testing.T) {
