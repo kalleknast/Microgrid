@@ -26,6 +26,16 @@ fi
 
 ../bin/cryptogen generate --config crypto-config.yaml --output=crypto-config
 
+# replace private keys, see lines 287-315
+# https://github.com/hyperledger/fabric-samples/blob/master/first-network/byfn.sh
+# Copy the template to the file that will be modified to add the private key
+cp base/docker-compose-base-template.yaml base/docker-compose-base.yaml
+CURRENT_DIR=$PWD
+cd crypto-config/peerOrganizations/house01.microgrid.org/ca
+PRIV_KEY=$(ls *_sk)
+cd "$CURRENT_DIR"
+sed "-i" "s/CA1_PRIVATE_KEY/${PRIV_KEY}/g" base/docker-compose-base.yaml
+
 ../bin/configtxgen -profile OrdererGenesis -outputBlock ./channel-artifacts/genesis.block
 
 ../bin/configtxgen -profile $CHANNEL_NAME -outputCreateChannelTx ./channel-artifacts/channel.tx -channelID $CHANNEL_NAME

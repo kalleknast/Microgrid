@@ -16,4 +16,4 @@ docker exec -ti cli sh -c "CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hy
 
 
 echo "Instantiating chaincode"
-docker exec -ti cli sh -c "peer chaincode instantiate -o orderer.microgrid.org:7050 --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/microgrid.org/orderers/orderer.microgrid.org/msp/tlscacerts/tlsca.microgrid.org-cert.pem -C hachannel -n carecords -v 1.0 -c '{\"Args\":[\"init\",\"a\", \"100\", \"b\",\"200\"]}' -P \"OR ('House01MSP.member','House02MSP.member')\""
+docker exec -ti cli sh -c "peer chaincode instantiate -o orderer.microgrid.org:7050 --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/microgrid.org/orderers/orderer.microgrid.org/msp/tlscacerts/tlsca.microgrid.org-cert.pem -C hachannel -n carecords -v 1.0 -c '{\"Args\":[\"init\",\"a\", \"100\", \"b\",\"200\"]}' -P \"OR ('House01MSP.member','House03MSP.member')\""

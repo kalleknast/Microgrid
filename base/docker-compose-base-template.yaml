@@ -1,0 +1,312 @@
+version: '2'
+
+services:
+
+  ca.microgrid.org:
+    container_name: ca.microgrid.org
+    image: hyperledger/fabric-ca:latest
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca.microgrid.org
+      - FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.house01.microgrid.org-cert.pem
+      - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA1_PRIVATE_KEY  # will be replaced with a real file name by configure.sh
+    ports:
+      - "7054:7054"
+    command: sh -c 'fabric-ca-server start -b admin:adminpw'
+    volumes:
+      - ./crypto-config/peerOrganizations/house01.microgrid.org/ca/:/etc/hyperledger/fabric-ca-server-config
+    networks:
+      - mgn
+
+  orderer.microgrid.org:
+    container_name: orderer.microgrid.org
+    image: hyperledger/fabric-orderer:latest
+    environment:
+      - ORDERER_GENERAL_LOGLEVEL=INFO
+      - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+      - ORDERER_GENERAL_GENESISMETHOD=file
+      - ORDERER_GENERAL_GENESISFILE=/var/hyperledger/orderer/orderer.genesis.block
+      - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
+      - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp
+
+
+      # enabled TLS
+      - ORDERER_GENERAL_TLS_ENABLED=true
+      - ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+      - ORDERER_GENERAL_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+      - ORDERER_GENERAL_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric
+    command: orderer
+    volumes:
+    - ../channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
+    - ../crypto-config/ordererOrganizations/microgrid.org/orderers/orderer.microgrid.org/msp:/var/hyperledger/orderer/msp
+    - ../crypto-config/ordererOrganizations/microgrid.org/orderers/orderer.microgrid.org/tls/:/var/hyperledger/orderer/tls
+    - orderer.microgrid.org:/var/hyperledger/production/orderer
+    ports:
+      - 7050:7050
+
+  peer0.house01.microgrid.org:
+    container_name: peer0.house01.microgrid.org
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.house01.microgrid.org
+      - CORE_PEER_ADDRESS=peer0.house01.microgrid.org:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.house01.microgrid.org:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.house01.microgrid.org:7051
+      - CORE_PEER_LOCALMSPID=House01MSP
+    #   - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/peer/
+      # # the following setting starts chaincode containers on the same
+      # # bridge network as the peers
+      # # https://docs.docker.com/compose/networking/
+
+    command: peer node start
+    # command: peer node start --peer-chaincodedev=true
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/house01.microgrid.org/peers/peer0.house01.microgrid.org/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/house01.microgrid.org/peers/peer0.house01.microgrid.org/tls:/etc/hyperledger/fabric/tls
+        - peer0.house01.microgrid.org:/var/hyperledger/production
+    ports:
+      - 7051:7051
+      - 7053:7053
+
+
+
+  peer1.house01.microgrid.org:
+    container_name: peer1.house01.microgrid.org
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer1.house01.microgrid.org
+      - CORE_PEER_ADDRESS=peer1.house01.microgrid.org:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.house01.microgrid.org:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.house01.microgrid.org:7051
+      - CORE_PEER_LOCALMSPID=House01MSP
+
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/house01.microgrid.org/peers/peer1.house01.microgrid.org/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/house01.microgrid.org/peers/peer1.house01.microgrid.org/tls:/etc/hyperledger/fabric/tls
+        - peer1.house01.microgrid.org:/var/hyperledger/production
+    ports:
+      - 8051:7051
+      - 8053:7053
+
+  peer0.house02.microgrid.org:
+    container_name: peer0.house02.microgrid.org
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.house02.microgrid.org
+      - CORE_PEER_ADDRESS=peer0.house02.microgrid.org:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.house02.microgrid.org:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.house02.microgrid.org:7051
+      - CORE_PEER_LOCALMSPID=House02MSP
+
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/house02.microgrid.org/peers/peer0.house02.microgrid.org/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/house02.microgrid.org/peers/peer0.house02.microgrid.org/tls:/etc/hyperledger/fabric/tls
+        - peer0.house02.microgrid.org:/var/hyperledger/production
+    ports:
+      - 9051:7051
+      - 9053:7053
+
+  peer1.house02.microgrid.org:
+    container_name: peer1.house02.microgrid.org
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer1.house02.microgrid.org
+      - CORE_PEER_ADDRESS=peer1.house02.microgrid.org:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.house02.microgrid.org:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.house02.microgrid.org:7051
+      - CORE_PEER_LOCALMSPID=House02MSP
+
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/house02.microgrid.org/peers/peer1.house02.microgrid.org/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/house02.microgrid.org/peers/peer1.house02.microgrid.org/tls:/etc/hyperledger/fabric/tls
+        - peer1.house02.microgrid.org:/var/hyperledger/production
+    ports:
+      - 10051:7051
+      - 10053:7053
+
+  peer0.house03.microgrid.org:
+    container_name: peer0.house03.microgrid.org
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.house03.microgrid.org
+      - CORE_PEER_ADDRESS=peer0.house03.microgrid.org:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.house03.microgrid.org:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.house03.microgrid.org:7051
+      - CORE_PEER_LOCALMSPID=House03MSP
+
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/house03.microgrid.org/peers/peer0.house03.microgrid.org/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/house03.microgrid.org/peers/peer0.house03.microgrid.org/tls:/etc/hyperledger/fabric/tls
+        - peer0.house03.microgrid.org:/var/hyperledger/production
+    ports:
+      - 11051:7051
+      - 11053:7053
+
+
+
+  peer1.house03.microgrid.org:
+    container_name: peer1.house03.microgrid.org
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer1.house03.microgrid.org
+      - CORE_PEER_ADDRESS=peer1.house03.microgrid.org:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.house03.microgrid.org:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.house03.microgrid.org:7051
+      - CORE_PEER_LOCALMSPID=House03MSP
+
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/house03.microgrid.org/peers/peer1.house03.microgrid.org/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/house03.microgrid.org/peers/peer1.house03.microgrid.org/tls:/etc/hyperledger/fabric/tls
+        - peer1.house03.microgrid.org:/var/hyperledger/production
+    ports:
+      - 12051:7051
+      - 12053:7053
+
+
+
+  peer0.house04.microgrid.org:
+    container_name: peer0.house04.microgrid.org
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.house04.microgrid.org
+      - CORE_PEER_ADDRESS=peer0.house04.microgrid.org:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.house04.microgrid.org:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.house04.microgrid.org:7051
+      - CORE_PEER_LOCALMSPID=House04MSP
+
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/house04.microgrid.org/peers/peer0.house04.microgrid.org/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/house04.microgrid.org/peers/peer0.house04.microgrid.org/tls:/etc/hyperledger/fabric/tls
+        - peer0.house04.microgrid.org:/var/hyperledger/production
+    ports:
+      - 13051:7051
+      - 13053:7053
+
+
+  peer1.house04.microgrid.org:
+    container_name: peer1.house04.microgrid.org
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer1.house04.microgrid.org
+      - CORE_PEER_ADDRESS=peer1.house04.microgrid.org:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.house04.microgrid.org:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.house04.microgrid.org:7051
+      - CORE_PEER_LOCALMSPID=House04MSP
+
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/house04.microgrid.org/peers/peer1.house04.microgrid.org/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/house04.microgrid.org/peers/peer1.house04.microgrid.org/tls:/etc/hyperledger/fabric/tls
+        - peer1.house04.microgrid.org:/var/hyperledger/production
+    ports:
+      - 14051:7051
+      - 14053:7053
+
+
+  peer0.house05.microgrid.org:
+    container_name: peer0.house05.microgrid.org
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.house05.microgrid.org
+      - CORE_PEER_ADDRESS=peer0.house05.microgrid.org:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.house05.microgrid.org:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.house05.microgrid.org:7051
+      - CORE_PEER_LOCALMSPID=House05MSP
+
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/house05.microgrid.org/peers/peer0.house05.microgrid.org/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/house05.microgrid.org/peers/peer0.house05.microgrid.org/tls:/etc/hyperledger/fabric/tls
+        - peer0.house05.microgrid.org:/var/hyperledger/production
+    ports:
+      - 15051:7051
+      - 15053:7053
+
+  peer1.house05.microgrid.org:
+    container_name: peer1.house05.microgrid.org
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer1.house05.microgrid.org
+      - CORE_PEER_ADDRESS=peer1.house05.microgrid.org:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.house05.microgrid.org:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.house05.microgrid.org:7051
+      - CORE_PEER_LOCALMSPID=House05MSP
+
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/house05.microgrid.org/peers/peer1.house05.microgrid.org/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/house05.microgrid.org/peers/peer1.house05.microgrid.org/tls:/etc/hyperledger/fabric/tls
+        - peer1.house05.microgrid.org:/var/hyperledger/production
+    ports:
+      - 16051:7051
+      - 16053:7053
+
+  peer0.house06.microgrid.org:
+    container_name: peer0.house06.microgrid.org
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.house06.microgrid.org
+      - CORE_PEER_ADDRESS=peer0.house06.microgrid.org:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.house06.microgrid.org:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.house06.microgrid.org:7051
+      - CORE_PEER_LOCALMSPID=House06MSP
+
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/house06.microgrid.org/peers/peer0.house06.microgrid.org/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/house06.microgrid.org/peers/peer0.house06.microgrid.org/tls:/etc/hyperledger/fabric/tls
+        - peer0.house06.microgrid.org:/var/hyperledger/production
+    ports:
+      - 17051:7051
+      - 17053:7053
+
+  peer1.house06.microgrid.org:
+    container_name: peer1.house06.microgrid.org
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer1.house06.microgrid.org
+      - CORE_PEER_ADDRESS=peer1.house06.microgrid.org:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.house06.microgrid.org:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.house06.microgrid.org:7051
+      - CORE_PEER_LOCALMSPID=House06MSP
+
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/house06.microgrid.org/peers/peer1.house06.microgrid.org/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/house06.microgrid.org/peers/peer1.house06.microgrid.org/tls:/etc/hyperledger/fabric/tls
+        - peer1.house06.microgrid.org:/var/hyperledger/production
+    ports:
+      - 18051:7051
+      - 18053:7053

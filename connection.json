@@ -1,0 +1,52 @@
+{
+    "name": "mgn",
+    "version": "1.0.0",
+    "client": {
+        "organization": "House01",
+        "connection": {
+            "timeout": {
+                "peer": {
+                    "endorser": "300"
+                },
+                "orderer": "300"
+            }
+        }
+    },
+    "channels": {
+        "hachannel": {
+            "orderers": [
+                "orderer.microgrid.org"
+            ],
+            "peers": {
+                "peer0.house01.microgrid.org": {}
+            }
+        }
+    },
+    "organizations": {
+        "House01": {
+            "mspid": "House01MSP",
+            "peers": [
+                "peer0.house01.microgrid.org"
+            ],
+            "certificateAuthorities": [
+                "ca.microgrid.org"
+            ]
+        }
+    },
+    "orderers": {
+        "orderer.microgrid.org": {
+            "url": "grpc://localhost:7050"
+        }
+    },
+    "peers": {
+        "peer0.house01.microgrid.org": {
+            "url": "grpc://localhost:7051"
+        }
+    },
+    "certificateAuthorities": {
+        "ca.microgrid.org": {
+            "url": "http://localhost:7054",
+            "caName": "ca.microgrid.org"
+        }
+    }
+}
