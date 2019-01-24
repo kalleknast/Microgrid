@@ -38,16 +38,16 @@ sed "-i" "s/CA1_PRIVATE_KEY/${PRIV_KEY}/g" base/docker-compose-base.yaml
 
 ../bin/configtxgen -profile OrdererGenesis -outputBlock ./channel-artifacts/genesis.block
 
-../bin/configtxgen -profile $CHANNEL_NAME -outputCreateChannelTx ./channel-artifacts/channel.tx -channelID $CHANNEL_NAME
+../bin/configtxgen -profile HAChannel -outputCreateChannelTx ./channel-artifacts/channel.tx -channelID $CHANNEL_NAME
 
-../bin/configtxgen -profile $CHANNEL_NAME -outputAnchorPeersUpdate ./channel-artifacts/House01Anchor.tx -channelID $CHANNEL_NAME -asOrg House01MSP
+../bin/configtxgen -profile HAChannel -outputAnchorPeersUpdate ./channel-artifacts/House01Anchor.tx -channelID $CHANNEL_NAME -asOrg House01MSP
 
-../bin/configtxgen -profile $CHANNEL_NAME -outputAnchorPeersUpdate ./channel-artifacts/House02Anchor.tx -channelID $CHANNEL_NAME -asOrg House02MSP
+../bin/configtxgen -profile HAChannel -outputAnchorPeersUpdate ./channel-artifacts/House02Anchor.tx -channelID $CHANNEL_NAME -asOrg House02MSP
 
-../bin/configtxgen -profile $CHANNEL_NAME -outputAnchorPeersUpdate ./channel-artifacts/House03Anchor.tx -channelID $CHANNEL_NAME -asOrg House03MSP
+../bin/configtxgen -profile HAChannel -outputAnchorPeersUpdate ./channel-artifacts/House03Anchor.tx -channelID $CHANNEL_NAME -asOrg House03MSP
 
-../bin/configtxgen -profile $CHANNEL_NAME -outputAnchorPeersUpdate ./channel-artifacts/House04Anchor.tx -channelID $CHANNEL_NAME -asOrg House04MSP
+../bin/configtxgen -profile HAChannel -outputAnchorPeersUpdate ./channel-artifacts/House04Anchor.tx -channelID $CHANNEL_NAME -asOrg House04MSP
 
-../bin/configtxgen -profile $CHANNEL_NAME -outputAnchorPeersUpdate ./channel-artifacts/House05Anchor.tx -channelID $CHANNEL_NAME -asOrg House05MSP
+../bin/configtxgen -profile HAChannel -outputAnchorPeersUpdate ./channel-artifacts/House05Anchor.tx -channelID $CHANNEL_NAME -asOrg House05MSP
 
-../bin/configtxgen -profile $CHANNEL_NAME -outputAnchorPeersUpdate ./channel-artifacts/House06Anchor.tx -channelID $CHANNEL_NAME -asOrg House06MSP
+../bin/configtxgen -profile HAChannel -outputAnchorPeersUpdate ./channel-artifacts/House06Anchor.tx -channelID $CHANNEL_NAME -asOrg House06MSP

@@ -213,7 +213,7 @@ Profiles:
                     - *House04
                     - *House05
                     - *House06
-    hachannel:
+    HAChannel:
         Consortium: MicroGridConsortium
         Application:
             <<: *ApplicationDefaults
