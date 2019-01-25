@@ -1,19 +1,31 @@
 #!/bin/bash
 
-echo "Installing chaincode"
-docker exec -ti cli sh -c "CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house01.microgrid.org/users/Admin@house01.microgrid.org/msp CORE_PEER_ADDRESS=peer0.house01.microgrid.org:7051 CORE_PEER_LOCALMSPID="House01MSP" CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house01.microgrid.org/peers/peer0.house01.microgrid.org/tls/ca.crt peer chaincode install -n carecords -v 1.0 -p chaincode/go/src -l golang"
-docker exec -ti cli sh -c "CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house01.microgrid.org/users/Admin@house01.microgrid.org/msp CORE_PEER_ADDRESS=peer1.house01.microgrid.org:7051 CORE_PEER_LOCALMSPID="House01MSP" CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house01.microgrid.org/peers/peer1.house01.microgrid.org/tls/ca.crt peer chaincode install -n carecords -v 1.0 -p chaincode/go/src -l golang"
-docker exec -ti cli sh -c "CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house02.microgrid.org/users/Admin@house02.microgrid.org/msp CORE_PEER_ADDRESS=peer0.house02.microgrid.org:7051 CORE_PEER_LOCALMSPID="House02MSP" CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house02.microgrid.org/peers/peer0.house02.microgrid.org/tls/ca.crt peer chaincode install -n carecords -v 1.0 -p chaincode/go/src -l golang"
-docker exec -ti cli sh -c "CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house02.microgrid.org/users/Admin@house02.microgrid.org/msp CORE_PEER_ADDRESS=peer1.house02.microgrid.org:7051 CORE_PEER_LOCALMSPID="House02MSP" CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house02.microgrid.org/peers/peer1.house02.microgrid.org/tls/ca.crt peer chaincode install -n carecords -v 1.0 -p chaincode/go/src -l golang"
-docker exec -ti cli sh -c "CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house03.microgrid.org/users/Admin@house03.microgrid.org/msp CORE_PEER_ADDRESS=peer0.house03.microgrid.org:7051 CORE_PEER_LOCALMSPID="House03MSP" CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house03.microgrid.org/peers/peer0.house03.microgrid.org/tls/ca.crt peer chaincode install -n carecords -v 1.0 -p chaincode/go/src -l golang"
-docker exec -ti cli sh -c "CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house03.microgrid.org/users/Admin@house03.microgrid.org/msp CORE_PEER_ADDRESS=peer1.house03.microgrid.org:7051 CORE_PEER_LOCALMSPID="House03MSP" CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house03.microgrid.org/peers/peer1.house03.microgrid.org/tls/ca.crt peer chaincode install -n carecords -v 1.0 -p chaincode/go/src -l golang"
-docker exec -ti cli sh -c "CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house04.microgrid.org/users/Admin@house04.microgrid.org/msp CORE_PEER_ADDRESS=peer0.house04.microgrid.org:7051 CORE_PEER_LOCALMSPID="House04MSP" CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house04.microgrid.org/peers/peer0.house04.microgrid.org/tls/ca.crt peer chaincode install -n carecords -v 1.0 -p chaincode/go/src -l golang"
-docker exec -ti cli sh -c "CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house04.microgrid.org/users/Admin@house04.microgrid.org/msp CORE_PEER_ADDRESS=peer1.house04.microgrid.org:7051 CORE_PEER_LOCALMSPID="House04MSP" CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house04.microgrid.org/peers/peer1.house04.microgrid.org/tls/ca.crt peer chaincode install -n carecords -v 1.0 -p chaincode/go/src -l golang"
-docker exec -ti cli sh -c "CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house05.microgrid.org/users/Admin@house05.microgrid.org/msp CORE_PEER_ADDRESS=peer0.house05.microgrid.org:7051 CORE_PEER_LOCALMSPID="House05MSP" CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house05.microgrid.org/peers/peer0.house05.microgrid.org/tls/ca.crt peer chaincode install -n carecords -v 1.0 -p chaincode/go/src -l golang"
-docker exec -ti cli sh -c "CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house05.microgrid.org/users/Admin@house05.microgrid.org/msp CORE_PEER_ADDRESS=peer1.house05.microgrid.org:7051 CORE_PEER_LOCALMSPID="House05MSP" CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house05.microgrid.org/peers/peer1.house05.microgrid.org/tls/ca.crt peer chaincode install -n carecords -v 1.0 -p chaincode/go/src -l golang"
-docker exec -ti cli sh -c "CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house06.microgrid.org/users/Admin@house06.microgrid.org/msp CORE_PEER_ADDRESS=peer0.house06.microgrid.org:7051 CORE_PEER_LOCALMSPID="House06MSP" CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house06.microgrid.org/peers/peer0.house06.microgrid.org/tls/ca.crt peer chaincode install -n carecords -v 1.0 -p chaincode/go/src -l golang"
-docker exec -ti cli sh -c "CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house06.microgrid.org/users/Admin@house06.microgrid.org/msp CORE_PEER_ADDRESS=peer1.house06.microgrid.org:7051 CORE_PEER_LOCALMSPID="House06MSP" CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house06.microgrid.org/peers/peer1.house06.microgrid.org/tls/ca.crt peer chaincode install -n carecords -v 1.0 -p chaincode/go/src -l golang"
+CONTRACT_ID="carecords"
+CHANNEL_ID="hachannel"
+ORDERER_ADDR="orderer.microgrid.org"
+CA_FILE="/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/microgrid.org/orderers/$ORDERER_ADDR/msp/tlscacerts/tlsca.microgrid.org-cert.pem"
 
+echo "Installing chaincode"
+
+for i in {1..6}
+do
+  HOUSE="House0"$i
+  HOUSE_ADDR=${HOUSE,,}".microgrid.org"
+  PEER_ADDR="peer0".$HOUSE_ADDR
+  CORE_PEER_LOCALMSPID=$HOUSE"MSP"
+  CORE_PEER_MSPCONFIGPATH="/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/$HOUSE_ADDR/users/Admin@$HOUSE_ADDR/msp"
+  CORE_PEER_TLS_ROOTCERT_FILE="/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/$HOUSE_ADDR/peers/$PEER_ADDR/tls/ca.crt"
+
+  docker exec -ti cli sh -c "CORE_PEER_MSPCONFIGPATH=$CORE_PEER_MSPCONFIGPATH CORE_PEER_ADDRESS=$PEER_ADDR:7051 CORE_PEER_LOCALMSPID=$CORE_PEER_LOCALMSPID CORE_PEER_TLS_ROOTCERT_FILE=$CORE_PEER_TLS_ROOTCERT_FILE peer chaincode install -n $CONTRACT_ID -v 1.0 -p chaincode/go/src -l golang"
+  sleep 3s
+done
+
+
+HOUSE1="House01"
+HOUSE2="House02"
+HOUSE1_MSP=$HOUSE1"MSP"
+HOUSE2_MSP=$HOUSE2"MSP"
 
 echo "Instantiating chaincode"
-docker exec -ti cli sh -c "peer chaincode instantiate -o orderer.microgrid.org:7050 --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/microgrid.org/orderers/orderer.microgrid.org/msp/tlscacerts/tlsca.microgrid.org-cert.pem -C hachannel -n carecords -v 1.0 -c '{\"Args\":[\"init\",\"a\", \"100\", \"b\",\"200\"]}' -P \"OR ('House01MSP.member','House03MSP.member')\""
+docker exec -ti cli sh -c "peer chaincode instantiate -o $ORDERER_ADDR:7050 --tls --cafile $CA_FILE -C $CHANNEL_ID -n $CONTRACT_ID -v 1.0 -c '{\"Args\":[\"init\"]}' -P \"OR ('$HOUSE1_MSP.member', '$HOUSE2_MSP.member')\""
+# docker exec -ti cli sh -c "peer chaincode instantiate -o $ORDERER_ADDR:7050 --tls --cafile $CA_FILE -C $CHANNEL_ID -n $CONTRACT_ID -v 1.0 -c '{\"Args\":[\"init\"]}' -P \"OR ('House01.member', 'House02.member')\""
