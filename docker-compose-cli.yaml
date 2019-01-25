@@ -21,7 +21,7 @@ networks:
 services:
 
   ca.microgrid.org:
-    container_name: ca.microgrid.org  
+    container_name: ca.microgrid.org
     extends:
       file:   base/docker-compose-base.yaml
       service: ca.microgrid.org
@@ -141,8 +141,8 @@ services:
     environment:
       - GOPATH=/opt/gopath
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
-      - CORE_LOGGING_LEVEL=DEBUG
-      #- CORE_LOGGING_LEVEL=INFO
+      #- FABRIC_LOGGING_SPEC=DEBUG
+      - FABRIC_LOGGING_SPEC=INFO
       - CORE_PEER_ID=cli
       - CORE_PEER_ADDRESS=peer0.house01.microgrid.org:7051
       - CORE_PEER_LOCALMSPID=House01MSP
@@ -187,7 +187,7 @@ services:
   #     environment:
   #       - GOPATH=/opt/gopath
   #       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
-  #       - CORE_LOGGING_LEVEL=DEBUG
+  #       - FABRIC_LOGGING_SPEC=DEBUG
   #       - CORE_PEER_ID=House01MSP
   #       - CORE_PEER_ADDRESS=peer0.house01.microgrid.org:7051
   #       - CORE_PEER_LOCALMSPID=House01MSP

@@ -1,67 +1,46 @@
+CHANNEL_ID="hachannel"
+ORDERER_ADDR="orderer.microgrid.org"
+CA_FILE="/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/microgrid.org/orderers/orderer.microgrid.org/msp/tlscacerts/tlsca.microgrid.org-cert.pem"
 
-CHANNEL_NAME=hachannel
 docker-compose -f docker-compose-cli.yaml -f docker-compose-couch.yaml up -d
 
 sleep 15s
 
-echo "Creating channel $CHANNEL_NAME"
-docker exec -ti cli sh -c "peer channel create -o orderer.microgrid.org:7050 -c $CHANNEL_NAME -f ./channel-artifacts/channel.tx --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/microgrid.org/orderers/orderer.microgrid.org/msp/tlscacerts/tlsca.microgrid.org-cert.pem"
+echo "Creating channel $CHANNEL_ID"
+docker exec -ti cli sh -c "peer channel create -o $ORDERER_ADDR:7050 -c $CHANNEL_ID -f ./channel-artifacts/channel.tx --tls --cafile $CA_FILE"
 
 sleep 5s
 
 echo "Adding peers to the channel"
-CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house01.microgrid.org/users/Admin@house01.microgrid.org/msp
-CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house01.microgrid.org/peers/peer0.house01.microgrid.org/tls/ca.crt
-docker exec -ti cli sh -c "CORE_PEER_MSPCONFIGPATH=$CORE_PEER_MSPCONFIGPATH CORE_PEER_ADDRESS=peer0.house01.microgrid.org:7051 CORE_PEER_LOCALMSPID="House01MSP" CORE_PEER_TLS_ROOTCERT_FILE=$CORE_PEER_TLS_ROOTCERT_FILE peer channel join -b $CHANNEL_NAME.block"
-sleep .5s
-CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house01.microgrid.org/peers/peer1.house01.microgrid.org/tls/ca.crt
-docker exec -ti cli sh -c "CORE_PEER_MSPCONFIGPATH=$CORE_PEER_MSPCONFIGPATH CORE_PEER_ADDRESS=peer1.house01.microgrid.org:7051 CORE_PEER_LOCALMSPID="House01MSP" CORE_PEER_TLS_ROOTCERT_FILE=$CORE_PEER_TLS_ROOTCERT_FILE peer channel join -b $CHANNEL_NAME.block"
-sleep .5s
-CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house02.microgrid.org/users/Admin@house02.microgrid.org/msp
-CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house02.microgrid.org/peers/peer0.house02.microgrid.org/tls/ca.crt
-docker exec -ti cli sh -c "CORE_PEER_MSPCONFIGPATH=$CORE_PEER_MSPCONFIGPATH CORE_PEER_ADDRESS=peer0.house02.microgrid.org:7051 CORE_PEER_LOCALMSPID="House02MSP" CORE_PEER_TLS_ROOTCERT_FILE=$CORE_PEER_TLS_ROOTCERT_FILE peer channel join -b $CHANNEL_NAME.block"
-sleep .5s
-CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house02.microgrid.org/peers/peer1.house02.microgrid.org/tls/ca.crt
-docker exec -ti cli sh -c "CORE_PEER_MSPCONFIGPATH=$CORE_PEER_MSPCONFIGPATH CORE_PEER_ADDRESS=peer1.house02.microgrid.org:7051 CORE_PEER_LOCALMSPID="House02MSP" CORE_PEER_TLS_ROOTCERT_FILE=$CORE_PEER_TLS_ROOTCERT_FILE peer channel join -b $CHANNEL_NAME.block"
-sleep .5s
-CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house03.microgrid.org/users/Admin@house03.microgrid.org/msp
-CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house03.microgrid.org/peers/peer0.house03.microgrid.org/tls/ca.crt
-docker exec -ti cli sh -c "CORE_PEER_MSPCONFIGPATH=$CORE_PEER_MSPCONFIGPATH CORE_PEER_ADDRESS=peer0.house03.microgrid.org:7051 CORE_PEER_LOCALMSPID="House03MSP" CORE_PEER_TLS_ROOTCERT_FILE=$CORE_PEER_TLS_ROOTCERT_FILE peer channel join -b $CHANNEL_NAME.block"
-sleep .5s
-CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house03.microgrid.org/peers/peer1.house03.microgrid.org/tls/ca.crt
-docker exec -ti cli sh -c "CORE_PEER_MSPCONFIGPATH=$CORE_PEER_MSPCONFIGPATH CORE_PEER_ADDRESS=peer1.house03.microgrid.org:7051 CORE_PEER_LOCALMSPID="House03MSP" CORE_PEER_TLS_ROOTCERT_FILE=$CORE_PEER_TLS_ROOTCERT_FILE peer channel join -b $CHANNEL_NAME.block"
-sleep .5s
-CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house04.microgrid.org/users/Admin@house04.microgrid.org/msp
-CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house04.microgrid.org/peers/peer0.house04.microgrid.org/tls/ca.crt
-docker exec -ti cli sh -c "CORE_PEER_MSPCONFIGPATH=$CORE_PEER_MSPCONFIGPATH CORE_PEER_ADDRESS=peer0.house04.microgrid.org:7051 CORE_PEER_LOCALMSPID="House04MSP" CORE_PEER_TLS_ROOTCERT_FILE=$CORE_PEER_TLS_ROOTCERT_FILE peer channel join -b $CHANNEL_NAME.block"
-sleep .5s
-CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house04.microgrid.org/peers/peer1.house04.microgrid.org/tls/ca.crt
-docker exec -ti cli sh -c "CORE_PEER_MSPCONFIGPATH=$CORE_PEER_MSPCONFIGPATH CORE_PEER_ADDRESS=peer1.house04.microgrid.org:7051 CORE_PEER_LOCALMSPID="House04MSP" CORE_PEER_TLS_ROOTCERT_FILE=$CORE_PEER_TLS_ROOTCERT_FILE peer channel join -b $CHANNEL_NAME.block"
-sleep .5s
-CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house05.microgrid.org/users/Admin@house05.microgrid.org/msp
-CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house05.microgrid.org/peers/peer0.house05.microgrid.org/tls/ca.crt
-docker exec -ti cli sh -c "CORE_PEER_MSPCONFIGPATH=$CORE_PEER_MSPCONFIGPATH CORE_PEER_ADDRESS=peer0.house05.microgrid.org:7051 CORE_PEER_LOCALMSPID="House05MSP" CORE_PEER_TLS_ROOTCERT_FILE=$CORE_PEER_TLS_ROOTCERT_FILE peer channel join -b $CHANNEL_NAME.block"
-sleep .5s
-CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house05.microgrid.org/peers/peer1.house05.microgrid.org/tls/ca.crt
-docker exec -ti cli sh -c "CORE_PEER_MSPCONFIGPATH=$CORE_PEER_MSPCONFIGPATH CORE_PEER_ADDRESS=peer1.house05.microgrid.org:7051 CORE_PEER_LOCALMSPID="House05MSP" CORE_PEER_TLS_ROOTCERT_FILE=$CORE_PEER_TLS_ROOTCERT_FILE peer channel join -b $CHANNEL_NAME.block"
-sleep .5s
-CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house06.microgrid.org/users/Admin@house06.microgrid.org/msp
-CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house06.microgrid.org/peers/peer0.house06.microgrid.org/tls/ca.crt
-docker exec -ti cli sh -c "CORE_PEER_MSPCONFIGPATH=$CORE_PEER_MSPCONFIGPATH CORE_PEER_ADDRESS=peer0.house06.microgrid.org:7051 CORE_PEER_LOCALMSPID="House06MSP" CORE_PEER_TLS_ROOTCERT_FILE=$CORE_PEER_TLS_ROOTCERT_FILE peer channel join -b $CHANNEL_NAME.block"
-sleep .5s
-CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house06.microgrid.org/peers/peer1.house06.microgrid.org/tls/ca.crt
-docker exec -ti cli sh -c "CORE_PEER_MSPCONFIGPATH=$CORE_PEER_MSPCONFIGPATH CORE_PEER_ADDRESS=peer1.house06.microgrid.org:7051 CORE_PEER_LOCALMSPID="House06MSP" CORE_PEER_TLS_ROOTCERT_FILE=$CORE_PEER_TLS_ROOTCERT_FILE peer channel join -b $CHANNEL_NAME.block"
-sleep .5s
+
+for i in {1..6}
+do
+  HOUSE="House0"$i
+  HOUSE_ADDR=${HOUSE,,}".microgrid.org"
+  CORE_PEER_MSPCONFIGPATH="/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/$HOUSE_ADDR/users/Admin@$HOUSE_ADDR/msp"
+  CORE_PEER_LOCALMSPID=$HOUSE"MSP"
+  for j in 0 1
+  do
+    PEER="peer"$j"."$HOUSE_ADDR
+    CORE_PEER_TLS_ROOTCERT_FILE="/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/$HOUSE_ADDR/peers/$PEER/tls/ca.crt"
+
+    docker exec -ti cli sh -c "CORE_PEER_MSPCONFIGPATH=$CORE_PEER_MSPCONFIGPATH CORE_PEER_ADDRESS=$PEER:7051 CORE_PEER_LOCALMSPID=$CORE_PEER_LOCALMSPID CORE_PEER_TLS_ROOTCERT_FILE=$CORE_PEER_TLS_ROOTCERT_FILE peer channel join -b $CHANNEL_ID.block"
+    sleep .5s
+  done
+done
 
 echo "Update anchor peers"
-docker exec -ti cli sh -c "CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house01.microgrid.org/users/Admin@house01.microgrid.org/msp CORE_PEER_ADDRESS=peer0.house01.microgrid.org:7051 CORE_PEER_LOCALMSPID="House01MSP" CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house01.microgrid.org/peers/peer0.house01.microgrid.org/tls/ca.crt peer channel update -o orderer.microgrid.org:7050 -c hachannel -f ./channel-artifacts/House01Anchor.tx --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/microgrid.org/orderers/orderer.microgrid.org/msp/tlscacerts/tlsca.microgrid.org-cert.pem"
-sleep 3s
-docker exec -ti cli sh -c "CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house02.microgrid.org/users/Admin@house02.microgrid.org/msp CORE_PEER_ADDRESS=peer0.house02.microgrid.org:7051 CORE_PEER_LOCALMSPID="House02MSP" CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house02.microgrid.org/peers/peer0.house02.microgrid.org/tls/ca.crt peer channel update -o orderer.microgrid.org:7050 -c hachannel -f ./channel-artifacts/House02Anchor.tx --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/microgrid.org/orderers/orderer.microgrid.org/msp/tlscacerts/tlsca.microgrid.org-cert.pem"
-sleep 3s
-docker exec -ti cli sh -c "CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house03.microgrid.org/users/Admin@house03.microgrid.org/msp CORE_PEER_ADDRESS=peer0.house03.microgrid.org:7051 CORE_PEER_LOCALMSPID="House03MSP" CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house03.microgrid.org/peers/peer0.house03.microgrid.org/tls/ca.crt peer channel update -o orderer.microgrid.org:7050 -c hachannel -f ./channel-artifacts/House03Anchor.tx --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/microgrid.org/orderers/orderer.microgrid.org/msp/tlscacerts/tlsca.microgrid.org-cert.pem"
-sleep 3s
-docker exec -ti cli sh -c "CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house04.microgrid.org/users/Admin@house04.microgrid.org/msp CORE_PEER_ADDRESS=peer0.house04.microgrid.org:7051 CORE_PEER_LOCALMSPID="House04MSP" CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house04.microgrid.org/peers/peer0.house04.microgrid.org/tls/ca.crt peer channel update -o orderer.microgrid.org:7050 -c hachannel -f ./channel-artifacts/House04Anchor.tx --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/microgrid.org/orderers/orderer.microgrid.org/msp/tlscacerts/tlsca.microgrid.org-cert.pem"
-sleep 3s
-docker exec -ti cli sh -c "CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house05.microgrid.org/users/Admin@house05.microgrid.org/msp CORE_PEER_ADDRESS=peer0.house05.microgrid.org:7051 CORE_PEER_LOCALMSPID="House05MSP" CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house05.microgrid.org/peers/peer0.house05.microgrid.org/tls/ca.crt peer channel update -o orderer.microgrid.org:7050 -c hachannel -f ./channel-artifacts/House05Anchor.tx --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/microgrid.org/orderers/orderer.microgrid.org/msp/tlscacerts/tlsca.microgrid.org-cert.pem"
-sleep 3s
-docker exec -ti cli sh -c "CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house06.microgrid.org/users/Admin@house06.microgrid.org/msp CORE_PEER_ADDRESS=peer0.house06.microgrid.org:7051 CORE_PEER_LOCALMSPID="House06MSP" CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house06.microgrid.org/peers/peer0.house06.microgrid.org/tls/ca.crt peer channel update -o orderer.microgrid.org:7050 -c hachannel -f ./channel-artifacts/House06Anchor.tx --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/microgrid.org/orderers/orderer.microgrid.org/msp/tlscacerts/tlsca.microgrid.org-cert.pem"
+
+for i in {1..6}
+do
+  HOUSE="House0"$i
+  HOUSE_ADDR=${HOUSE,,}".microgrid.org"
+  PEER="peer0".$HOUSE_ADDR
+  CORE_PEER_LOCALMSPID=$HOUSE"MSP"
+  CORE_PEER_MSPCONFIGPATH="/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/$HOUSE_ADDR/users/Admin@$HOUSE_ADDR/msp"
+  CORE_PEER_TLS_ROOTCERT_FILE="/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/$HOUSE_ADDR/peers/$PEER/tls/ca.crt"
+  CFG_TX_FILE="./channel-artifacts/"$HOUSE"Anchor.tx"
+
+  docker exec -ti cli sh -c "CORE_PEER_MSPCONFIGPATH=$CORE_PEER_MSPCONFIGPATH CORE_PEER_ADDRESS=$PEER:7051 CORE_PEER_LOCALMSPID=$CORE_PEER_LOCALMSPID CORE_PEER_TLS_ROOTCERT_FILE=$CORE_PEER_TLS_ROOTCERT_FILE peer channel update -o $ORDERER_ADDR:7050 -c $CHANNEL_ID -f $CFG_TX_FILE --tls --cafile $CA_FILE"
+  sleep 3s
+done
