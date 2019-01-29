@@ -2,7 +2,7 @@
 
 ARTIFACT_DIR="./channel-artifacts"
 CRYPTO_DIR="./crypto-config"
-CHANNEL_NAME=hachannel
+CHANNEL_NAME="hachannel"
 
 #!/bin/bash
 echo "Deleting old configs"

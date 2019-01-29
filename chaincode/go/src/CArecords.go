@@ -26,7 +26,7 @@ import (
 type EnergyRecords struct {
 }
 
-/*
+/*github.com/hyperledger/fabric/core/chaincode/shgithub.com/hyperledger/fabric/core/chaincode/shimim
  * Define the structure for a single record, with 3 properties.
  * Structure tags are used by encoding/json library
  */
@@ -90,14 +90,15 @@ func (s *EnergyRecords) getRecord(APIstub shim.ChaincodeStubInterface, args []st
 
 func (s *EnergyRecords) appendRecord(APIstub shim.ChaincodeStubInterface, args []string) peer.Response {
 
-	if len(args) != 3 {
-		return shim.Error(`Incorrect number of arguments. Expecting 3.
+	if len(args) != 4 {
+		return shim.Error(`Incorrect number of arguments. Expecting 4.
+														0 -- Key (transaction ID with format H<house #>_<yMD_HMS> e.g. H01_190129_235723)
                             1 -- House id\n
                             2 -- date and time\n
                             3 -- energy amount`)
 	}
 	//----------------------------------changed the indexing-------------------------
-	var record = Record{House: args[0], Time: args[1], Amount: args[2]}
+	var record = Record{House: args[1], Time: args[2], Amount: args[3]}
 
 	recordAsBytes, _ := json.Marshal(record)
 	APIstub.PutState(args[0], recordAsBytes)
