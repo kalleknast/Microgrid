@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"strconv"
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	"github.com/hyperledger/fabric/protos/peer"
@@ -42,7 +43,7 @@ type Record struct {
  * The Init method is called during chaincode instantiation to initialize any data.
  * Best practice is to have any Ledger initialization in separate function -- see initLedger()
  */
-func (s *EnergyRecords) Init(APIstub shim.ChaincodeStubInterface) peer.Response {
+func (s *EnergyRecords) Init(stub shim.ChaincodeStubInterface) peer.Response {
 	return shim.Success(nil)
 }
 
@@ -52,48 +53,54 @@ func (s *EnergyRecords) Init(APIstub shim.ChaincodeStubInterface) peer.Response 
  * The calling application program has also specified the particular
   * chaincode function to be called, with arguments
 */
-func (s *EnergyRecords) Invoke(APIstub shim.ChaincodeStubInterface) peer.Response {
+func (s *EnergyRecords) Invoke(stub shim.ChaincodeStubInterface) peer.Response {
 
 	// Retrieve the requested Smart Contract function and arguments
-	function, args := APIstub.GetFunctionAndParameters()
+	function, args := stub.GetFunctionAndParameters()
 	// Route to the appropriate handler function to interact with the ledger appropriately
 	if function == "getRecord" {
-		return s.getRecord(APIstub, args)
+		return s.getRecord(stub, args)
 	} else if function == "appendRecord" {
-		return s.appendRecord(APIstub, args)
-	} else if function == "getAllRecords" {
-		return s.getAllRecords(APIstub)
+		return s.appendRecord(stub, args)
+	} else if function == "getBidsByRange" {
+		return s.getBidsByRange(stub, args)
+	} else if function == "getRecordsByRange" {
+		return s.getRecordsByRange(stub, args)
 	}
 
 	return shim.Error("Invalid chaincode function name.")
 }
 
 // getRecord chaincode function - requires 1 argument, ex: args: ['190129_235723_H01'],
-func (s *EnergyRecords) getRecord(APIstub shim.ChaincodeStubInterface, args []string) peer.Response {
+func (s *EnergyRecords) getRecord(stub shim.ChaincodeStubInterface, args []string) peer.Response {
 
 	if len(args) != 1 {
 		return shim.Error("Incorrect number of arguments. Expecting 1.")
 	}
 
-	recordAsBytes, err := APIstub.GetState(args[0])
+	recordAsBytes, err := stub.GetState(args[0])
 	if err != nil {
 		return shim.Error(err.Error())
 	}
-	//---------------------------for testing purpose
-	Record := Record{}
 
-	//umarshal the data to a new record struct
-	json.Unmarshal(recordAsBytes, &Record)
-	fmt.Println(Record)
-
-	//---------------------------
 	return shim.Success(recordAsBytes)
 }
 
 /* Returns all records between the startKey (inclusive) and endKey (exclusive).
-   Example: ...[\"getRecordsByRange\",\"$KEY1\",\"$KEY2\"]
+	 The records are split into supply and demand bids
+
+   Examples
+
+	 	Records between Key1 (inclusive) and Key2 (exclusive):
+	 		[\"getBidsByRange\",\"$KEY1\",\"$KEY2\"]
+		Records up until Key2 (exclusive):
+	 		[\"getBidsByRange\",\"\",\"$KEY2\"]
+		Records after Key1 (inclusive):
+	 		[\"getBidsByRange\",\"$KEY1\",\"\"]
+		All records:
+	 		[\"getBidsByRange\",\"\",\"\"]
 */
-func (s *EnergyRecords) getRecordsByRange(APIstub shim.ChaincodeStubInterface, args []string) peer.Response {
+func (s *EnergyRecords) getBidsByRange(stub shim.ChaincodeStubInterface, args []string) peer.Response {
 
 	if len(args) != 2 {
 		return shim.Error("Incorrect number of arguments. Expecting 2.")
@@ -102,49 +109,63 @@ func (s *EnergyRecords) getRecordsByRange(APIstub shim.ChaincodeStubInterface, a
 	startKey := args[0]
 	endKey := args[1]
 
-	resultsIterator, err := APIstub.GetStateByRange(startKey, endKey)
+	resultsIterator, err := stub.GetStateByRange(startKey, endKey)
 	if err != nil {
 		return shim.Error(err.Error())
 	}
 	defer resultsIterator.Close()
 
 	// buffer is a JSON array containing QueryResults
-	var buffer bytes.Buffer
-	buffer.WriteString("[")
+	var return_buffer bytes.Buffer
+	var supply_buffer bytes.Buffer
+	var demand_buffer bytes.Buffer
+	supply_buffer.WriteString(`{"supply":`)
+	demand_buffer.WriteString(`{"demand":`)
 
-	bArrayMemberAlreadyWritten := false
 	for resultsIterator.HasNext() {
 		queryResponse, err := resultsIterator.Next()
 		if err != nil {
 			return shim.Error(err.Error())
 		}
-		// Add a comma before array members, suppress it for the first array member
-		if bArrayMemberAlreadyWritten == true {
-			buffer.WriteString(",")
+
+		// queryResponse to Record struct in order to check Record.Bid
+		Record := Record{}
+		//umarshal the data to a new record struct
+		json.Unmarshal([]byte(queryResponse.Value), &Record)
+		bid, err := strconv.Atoi(Record.Bid)
+		if err != nil {
+			return shim.Error(err.Error())
 		}
-		buffer.WriteString("{\"Key\":")
-		buffer.WriteString("\"")
-		buffer.WriteString(queryResponse.Key)
-		buffer.WriteString("\"")
 
-		buffer.WriteString(", \"Record\":")
-		// Record is a JSON object, so we write as-is
-		buffer.WriteString(string(queryResponse.Value))
-		buffer.WriteString("}")
-		bArrayMemberAlreadyWritten = true
+		// Use bid to separate between demand and supply bids
+		if bid < 0 { // Demand bid
+			demand_buffer.WriteString(string(queryResponse.Value))
+			// add a "," between records
+			supply_buffer.WriteString(",")
+		} else {  // supply bid
+			supply_buffer.WriteString(string(queryResponse.Value))
+			// add a "," between records
+			demand_buffer.WriteString(",")
+		}
 	}
-	buffer.WriteString("]")
 
-	fmt.Printf("- getRecordsByRange:\n%s\n", buffer.String())
+	// get rid of the trailing ","
+	supply_bytes := bytes.TrimRight(supply_buffer.Bytes(), ",")
+	demand_bytes := bytes.TrimRight(demand_buffer.Bytes(), ",")
 
-	return shim.Success(buffer.Bytes())
+	return_buffer.WriteString(string(supply_bytes))
+	return_buffer.WriteString(`},`)
+	return_buffer.WriteString(string(demand_bytes))
+	return_buffer.WriteString(`}`)
+
+	// debug; not printed to terminal; check with "docker logs <CONTAINER ID>"
+	fmt.Printf("- getBidsByRange:\n%s\n", return_buffer.String())
+
+	return shim.Success(return_buffer.Bytes())
 }
 
 
-
-
-
-func (s *EnergyRecords) appendRecord(APIstub shim.ChaincodeStubInterface, args []string) peer.Response {
+func (s *EnergyRecords) appendRecord(stub shim.ChaincodeStubInterface, args []string) peer.Response {
 
 	if len(args) != 5 {
 		return shim.Error(`Incorrect number of arguments. Expecting 5.
@@ -158,13 +179,27 @@ func (s *EnergyRecords) appendRecord(APIstub shim.ChaincodeStubInterface, args [
 	var record = Record{House: args[1], Time: args[2], Amount: args[3], Bid: args[4]}
 
 	recordAsBytes, _ := json.Marshal(record)
-	APIstub.PutState(args[0], recordAsBytes)
+	stub.PutState(args[0], recordAsBytes)
 
 	return shim.Success(nil)
 }
 
-// getAllRecords chaincode function - requires no arguments , ex: args: [''],
-func (s *EnergyRecords) getAllRecords(APIstub shim.ChaincodeStubInterface) peer.Response {
+/* getRecordsByRange chaincode function
+   Either two args "Key_start" and  "Key_end",
+   or NO args, in which case all records will be read.
+
+	 Examples
+	 
+	 	Records between Key1 (inclusive) and Key2 (exclusive):
+	 		[\"getBidsByRange\",\"$KEY1\",\"$KEY2\"]
+		Records up until Key2 (exclusive):
+	 		[\"getBidsByRange\",\"\",\"$KEY2\"]
+		Records after Key1 (inclusive):
+	 		[\"getBidsByRange\",\"$KEY1\",\"\"]
+		All records:
+	 		[\"getBidsByRange\",\"\",\"\"]
+ */
+func (s *EnergyRecords) getRecordsByRange(stub shim.ChaincodeStubInterface, args []string) peer.Response {
 
 	/*
 	 * GetStateByRange returns a range iterator over a set of keys in the
@@ -174,10 +209,20 @@ func (s *EnergyRecords) getAllRecords(APIstub shim.ChaincodeStubInterface) peer.
 	 * Note that startKey and endKey can be empty string, which implies
 	 * unbounded range query on start or end.
 	 */
-	startKey := ""
-	endKey := ""
+	 var startKey string
+	 var endKey string
 
-	resultsIterator, err := APIstub.GetStateByRange(startKey, endKey)
+	 if len(args) == 2 {
+		 startKey = args[0]
+		 endKey = args[1]
+ 	} else if len(args) == 0 {
+		startKey = ""
+		endKey = ""
+	} else {
+		return shim.Error("Incorrect number of arguments. Expecting 2 or 0.")
+	}
+
+	resultsIterator, err := stub.GetStateByRange(startKey, endKey)
 	if err != nil {
 		return shim.Error(err.Error())
 	}
@@ -210,7 +255,8 @@ func (s *EnergyRecords) getAllRecords(APIstub shim.ChaincodeStubInterface) peer.
 	}
 	buffer.WriteString("]")
 
-	fmt.Printf("- getAllRecords:\n%s\n", buffer.String())
+	// debug; not printed to terminal; check with "docker logs <CONTAINER ID>"
+	fmt.Printf("- getRecordsByRange:\n%s\n", buffer.String())
 
 	return shim.Success(buffer.Bytes())
 }
@@ -221,6 +267,7 @@ func main() {
 	// Create a new Smart Contract
 	err := shim.Start(new(EnergyRecords))
 	if err != nil {
+		// debug; not printed to terminal; check with "docker logs <CONTAINER ID>"
 		fmt.Printf("Error creating new Energy Record: %s", err)
 	}
 }

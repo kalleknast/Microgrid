@@ -28,9 +28,15 @@ do
   echo "Invoking $CONTRACT_ID, Key: $KEY1"
   echo "Invoking $CONTRACT_ID, Key: $KEY2"
 
-  docker exec -ti cli sh -c  "peer chaincode invoke -o $ORDERER_ADDR:7050 --tls true --cafile $CA_FILE -C $CHANNEL_ID -n $CONTRACT_ID --peerAddresses $PEER1:7051 --tlsRootCertFiles $TLS_ROOT_CERT_FILES_HOUSE1 --peerAddresses $PEER2:7051 --tlsRootCertFiles $TLS_ROOT_CERT_FILES_HOUSE2  -c '{\"Args\":[\"appendRecord\",\"$KEY1\",\"House01\",\"$DATE_TIME\",\"10\"]}'"
-  docker exec -ti cli sh -c  "peer chaincode invoke -o $ORDERER_ADDR:7050 --tls true --cafile $CA_FILE -C $CHANNEL_ID -n $CONTRACT_ID --peerAddresses $PEER1:7051 --tlsRootCertFiles $TLS_ROOT_CERT_FILES_HOUSE1 --peerAddresses $PEER2:7051 --tlsRootCertFiles $TLS_ROOT_CERT_FILES_HOUSE2  -c '{\"Args\":[\"appendRecord\",\"$KEY2\",\"House02\",\"$DATE_TIME\",\"10\"]}'"
-  sleep 15
+  docker exec -ti cli sh -c  "peer chaincode invoke -o $ORDERER_ADDR:7050 --tls true --cafile $CA_FILE -C $CHANNEL_ID -n $CONTRACT_ID --peerAddresses $PEER1:7051 --tlsRootCertFiles $TLS_ROOT_CERT_FILES_HOUSE1 --peerAddresses $PEER2:7051 --tlsRootCertFiles $TLS_ROOT_CERT_FILES_HOUSE2  -c '{\"Args\":[\"appendRecord\",\"$KEY1\",\"House01\",\"$DATE_TIME\",\"10\",\"6\"]}'"
+  docker exec -ti cli sh -c  "peer chaincode invoke -o $ORDERER_ADDR:7050 --tls true --cafile $CA_FILE -C $CHANNEL_ID -n $CONTRACT_ID --peerAddresses $PEER1:7051 --tlsRootCertFiles $TLS_ROOT_CERT_FILES_HOUSE1 --peerAddresses $PEER2:7051 --tlsRootCertFiles $TLS_ROOT_CERT_FILES_HOUSE2  -c '{\"Args\":[\"appendRecord\",\"$KEY2\",\"House02\",\"$DATE_TIME\",\"10\",\"-15\"]}'"
+  # sleep 5
 done
 
-docker exec -ti cli sh -c  "peer chaincode query -C $CHANNEL_ID -n $CONTRACT_ID -c '{\"Args\": [\"getAllRecords\"]}'"
+# docker exec -ti cli sh -c  "peer chaincode query -C $CHANNEL_ID -n $CONTRACT_ID -c '{\"Args\": [\"getRecordsByRange\"]}'"
+
+docker exec -ti cli sh -c  "peer chaincode query -C $CHANNEL_ID -n $CONTRACT_ID -c '{\"Args\": [\"getRecordsByRange\",\"\",\"\"]}'"
+
+
+# docker exec -ti cli sh -c  "peer chaincode query -C $CHANNEL_ID -n $CONTRACT_ID -c '{\"Args\": [\"getBidsByRange\",\"190130_130421_H01\",\"190130_132451_H02\"]}'"
+docker exec -ti cli sh -c  "peer chaincode query -C $CHANNEL_ID -n $CONTRACT_ID -c '{\"Args\": [\"getBidsByRange\",\"\",\"\"]}'"
