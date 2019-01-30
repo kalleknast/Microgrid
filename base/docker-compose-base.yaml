@@ -9,7 +9,7 @@ services:
       - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
       - FABRIC_CA_SERVER_CA_NAME=ca.microgrid.org
       - FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.house01.microgrid.org-cert.pem
-      - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/2503bc8a96e74fb8be3285c7dc8092902e8b019da7397d3441f47de5d7535761_sk  # will be replaced with a real file name by configure.sh
+      - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/bab391915112bbb896b2af2d622fe72329349868b3104634b23f1976cab453dd_sk  # will be replaced with a real file name by configure.sh
     ports:
       - "7054:7054"
     command: sh -c 'fabric-ca-server start -b admin:adminpw'
