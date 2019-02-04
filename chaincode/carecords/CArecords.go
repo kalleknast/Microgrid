@@ -99,6 +99,22 @@ func (s *EnergyRecords) getRecord(stub shim.ChaincodeStubInterface, args []strin
 	 		[\"getBidsByRange\",\"$KEY1\",\"\"]
 		All records:
 	 		[\"getBidsByRange\",\"\",\"\"]
+
+	example output:
+		[{"supply":
+			[
+				{"amount":"10","bid":"6","house":"House01","time":"2019-02-04 17:13:06"},
+				{"amount":"10","bid":"6","house":"House01","time":"2019-02-04 17:13:19"},
+				{"amount":"10","bid":"6","house":"House01","time":"2019-02-04 17:13:20"}
+			]},
+		 {"demand":
+		 	[
+				{"amount":"10","bid":"-15","house":"House02","time":"2019-02-04 17:13:06"},
+				{"amount":"10","bid":"-15","house":"House02","time":"2019-02-04 17:13:19"},
+				{"amount":"10","bid":"-15","house":"House02","time":"2019-02-04 17:13:20"}
+			]}
+		]
+
 */
 func (s *EnergyRecords) getBidsByRange(stub shim.ChaincodeStubInterface, args []string) peer.Response {
 
@@ -119,8 +135,8 @@ func (s *EnergyRecords) getBidsByRange(stub shim.ChaincodeStubInterface, args []
 	var return_buffer bytes.Buffer
 	var supply_buffer bytes.Buffer
 	var demand_buffer bytes.Buffer
-	supply_buffer.WriteString(`{"supply":`)
-	demand_buffer.WriteString(`{"demand":`)
+	supply_buffer.WriteString(`[{"supply":[`)
+	demand_buffer.WriteString(`{"demand":[`)
 
 	for resultsIterator.HasNext() {
 		queryResponse, err := resultsIterator.Next()
@@ -141,11 +157,11 @@ func (s *EnergyRecords) getBidsByRange(stub shim.ChaincodeStubInterface, args []
 		if bid < 0 { // Demand bid
 			demand_buffer.WriteString(string(queryResponse.Value))
 			// add a "," between records
-			supply_buffer.WriteString(",")
+			demand_buffer.WriteString(",")
 		} else {  // supply bid
 			supply_buffer.WriteString(string(queryResponse.Value))
 			// add a "," between records
-			demand_buffer.WriteString(",")
+			supply_buffer.WriteString(",")
 		}
 	}
 
@@ -154,9 +170,9 @@ func (s *EnergyRecords) getBidsByRange(stub shim.ChaincodeStubInterface, args []
 	demand_bytes := bytes.TrimRight(demand_buffer.Bytes(), ",")
 
 	return_buffer.WriteString(string(supply_bytes))
-	return_buffer.WriteString(`},`)
+	return_buffer.WriteString(`]},`)
 	return_buffer.WriteString(string(demand_bytes))
-	return_buffer.WriteString(`}`)
+	return_buffer.WriteString(`]}]`)
 
 	// debug; not printed to terminal; check with "docker logs <CONTAINER ID>"
 	fmt.Printf("- getBidsByRange:\n%s\n", return_buffer.String())
@@ -189,7 +205,7 @@ func (s *EnergyRecords) appendRecord(stub shim.ChaincodeStubInterface, args []st
    or NO args, in which case all records will be read.
 
 	 Examples
-	 
+
 	 	Records between Key1 (inclusive) and Key2 (exclusive):
 	 		[\"getBidsByRange\",\"$KEY1\",\"$KEY2\"]
 		Records up until Key2 (exclusive):
