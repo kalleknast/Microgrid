@@ -146,7 +146,7 @@ func (s *EnergyRecords) getBidsByRange(stub shim.ChaincodeStubInterface, args []
 		// queryResponse to Record struct in order to check Record.Bid
 		Record := Record{}
 		//umarshal the data to a new record struct
-		json.Unmarshal([]byte(queryResponse.Value), &Record)
+		json.Unmarshal(queryResponse.Value, &Record)
 		//bid, err := strconv.Atoi(Record.Bid)
 		// bid := Record.Bid
 		if err != nil {

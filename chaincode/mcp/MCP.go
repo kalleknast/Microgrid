@@ -1,14 +1,13 @@
 package main
 
 import (
-	// "bytes"
 	"encoding/json"
 	"fmt"
 	"sort"
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	"github.com/hyperledger/fabric/protos/peer"
-	"github.com/hyperledger/fabric/common/util"
+	// "github.com/hyperledger/fabric/common/util"
 )
 
 /*
@@ -17,30 +16,31 @@ import (
 type MarketClearingPrice struct {
 }
 
-/*github.com/hyperledger/fabric/core/chaincode/shgithub.com/hyperledger/fabric/core/chaincode/shim
- * Define the structure for a single record, with 3 properties.
- * Structure tags are used by encoding/json library
- */
-// type Record struct {
-// 	House  string `json:"house"`
-// 	Time   string `json:"time"`
-// 	Amount string `json:"amount"`
-// }
-
 type Bids struct {
 	Supply []struct {
 		Amount int `json:"amount"`
 		Bid    int `json:"bid"`
 		House  string `json:"house"`
 		Time   string `json:"time"`
-	} `json:"supply,omitempty"`
+	} `json:"payload,omitempty"` //supply
 	Demand []struct {
 		Amount int `json:"amount"`
 		Bid    int `json:"bid"`
 		House  string `json:"house"`
 		Time   string `json:"time"`
-	} `json:"demand,omitempty"`
+	} `json:"payload,omitempty"` //demand
 }
+
+// ToChaincodeArgs converts string args to []byte args
+// Taken from util.go
+func ToChaincodeArgs(args ...string) [][]byte {
+        bargs := make([][]byte, len(args))
+        for i, arg := range args {
+                bargs[i] = []byte(arg)
+        }
+        return bargs
+}
+
 
 /*
  * The Init method is called during chaincode instantiation to initialize any data.
@@ -67,6 +67,8 @@ func (s *MarketClearingPrice) Invoke(stub shim.ChaincodeStubInterface) peer.Resp
 	return shim.Error("Invalid chaincode function name.")
 }
 
+
+
 // getMCP chaincode function - requires 3 arguments: key1, key2 and CHANNEL_ID
 func (s *MarketClearingPrice) getMCP(stub shim.ChaincodeStubInterface, args []string) peer.Response {
 
@@ -78,19 +80,18 @@ func (s *MarketClearingPrice) getMCP(stub shim.ChaincodeStubInterface, args []st
 	key1 := args[1]
 	channelID := args[2]
 	// TODO Check that Key0 is <= Key1
-	invokeArgs := util.ToChaincodeArgs(key0, key1)
+	invokeArgs := ToChaincodeArgs(key0, key1)
 
 	response := stub.InvokeChaincode("getBidsByRange", invokeArgs, channelID)
-	// if err != nil {
-	// 	errStr := fmt.Sprintf("Failed to query getBidsByRange. Got error: %s", err.Error())
-	// 	fmt.Printf(errStr)
-	// 	return shim.Error(errStr)
-	// }
 
 	bidsAsBytes := response.GetPayload()
+	// if err != nil {
+	//  	errStr := fmt.Sprintf("Failed to query getBidsByRange. Got error: %s", err.Error())
+	//  	fmt.Printf(errStr)
+	//  	return shim.Error(errStr)
+	// }
 
 	bids := Bids{}
-	// json.Unmarshal([]byte(recordAsBytes), &bids)
 	err := json.Unmarshal(bidsAsBytes, &bids)
 
 	if err != nil {
