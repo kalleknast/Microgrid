@@ -15,7 +15,8 @@
 * [ ] Node.js application write energy data to the contract
     - [ ] figure out what to do with the admin secret key in ```enrollAdmin.js```
     - [ ] fix the ```affiliation``` setting, ```org1.department1``` seems to be hardcoded in ```/etc/hyperledger/fabric-ca-server/fabric-ca-server-config.yaml``` in the ```ca.microgrid.org``` container.
-* [ ] Write chaincode to bid and aggregate, Market Clearing Price (MCP) algorithm
+* [x] Write chaincode to bid and aggregate, Market Clearing Price (MCP) algorithm
+    - [] Test that the MCP contract returns the correct values
 * [ ] Implementing the violation marketplace
     - [ ] Tracking and settlement for participants in the violation marketplace
 * [ ] Price optimization chaincode
