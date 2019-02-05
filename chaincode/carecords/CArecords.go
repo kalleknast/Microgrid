@@ -35,8 +35,8 @@ type EnergyRecords struct {
 type Record struct {
 	House  string `json:"house"`
 	Time   string `json:"time"`
-	Amount string `json:"amount"`
-	Bid 	 string `json:"bid"`
+	Amount int `json:"amount"`
+	Bid 	 int `json:"bid"`
 }
 
 /*
@@ -101,19 +101,18 @@ func (s *EnergyRecords) getRecord(stub shim.ChaincodeStubInterface, args []strin
 	 		[\"getBidsByRange\",\"\",\"\"]
 
 	example output:
-		[{"supply":
+		{"supply":
 			[
-				{"amount":"10","bid":"6","house":"House01","time":"2019-02-04 17:13:06"},
-				{"amount":"10","bid":"6","house":"House01","time":"2019-02-04 17:13:19"},
-				{"amount":"10","bid":"6","house":"House01","time":"2019-02-04 17:13:20"}
+				{"amount":10,"bid":6,"house":"House01","time":"2019-02-04 17:13:06"},
+				{"amount":10,"bid":6,"house":"House01","time":"2019-02-04 17:13:19"},
+				{"amount":10,"bid":6,"house":"House01","time":"2019-02-04 17:13:20"}
 			]},
-		 {"demand":
+		 "demand":
 		 	[
-				{"amount":"10","bid":"-15","house":"House02","time":"2019-02-04 17:13:06"},
-				{"amount":"10","bid":"-15","house":"House02","time":"2019-02-04 17:13:19"},
-				{"amount":"10","bid":"-15","house":"House02","time":"2019-02-04 17:13:20"}
+				{"amount":10,"bid":-15,"house":"House02","time":"2019-02-04 17:13:06"},
+				{"amount":10,"bid":-15,"house":"House02","time":"2019-02-04 17:13:19"},
+				{"amount":10,"bid":-15,"house":"House02","time":"2019-02-04 17:13:20"}
 			]}
-		]
 
 */
 func (s *EnergyRecords) getBidsByRange(stub shim.ChaincodeStubInterface, args []string) peer.Response {
@@ -135,8 +134,8 @@ func (s *EnergyRecords) getBidsByRange(stub shim.ChaincodeStubInterface, args []
 	var return_buffer bytes.Buffer
 	var supply_buffer bytes.Buffer
 	var demand_buffer bytes.Buffer
-	supply_buffer.WriteString(`[{"supply":[`)
-	demand_buffer.WriteString(`{"demand":[`)
+	supply_buffer.WriteString(`{"supply":[`)
+	demand_buffer.WriteString(`"demand":[`)
 
 	for resultsIterator.HasNext() {
 		queryResponse, err := resultsIterator.Next()
@@ -148,13 +147,14 @@ func (s *EnergyRecords) getBidsByRange(stub shim.ChaincodeStubInterface, args []
 		Record := Record{}
 		//umarshal the data to a new record struct
 		json.Unmarshal([]byte(queryResponse.Value), &Record)
-		bid, err := strconv.Atoi(Record.Bid)
+		//bid, err := strconv.Atoi(Record.Bid)
+		// bid := Record.Bid
 		if err != nil {
 			return shim.Error(err.Error())
 		}
 
 		// Use bid to separate between demand and supply bids
-		if bid < 0 { // Demand bid
+		if Record.Bid < 0 { // Demand bid
 			demand_buffer.WriteString(string(queryResponse.Value))
 			// add a "," between records
 			demand_buffer.WriteString(",")
@@ -170,9 +170,9 @@ func (s *EnergyRecords) getBidsByRange(stub shim.ChaincodeStubInterface, args []
 	demand_bytes := bytes.TrimRight(demand_buffer.Bytes(), ",")
 
 	return_buffer.WriteString(string(supply_bytes))
-	return_buffer.WriteString(`]},`)
+	return_buffer.WriteString(`],`)
 	return_buffer.WriteString(string(demand_bytes))
-	return_buffer.WriteString(`]}]`)
+	return_buffer.WriteString(`]}`)
 
 	// debug; not printed to terminal; check with "docker logs <CONTAINER ID>"
 	fmt.Printf("- getBidsByRange:\n%s\n", return_buffer.String())
@@ -192,7 +192,18 @@ func (s *EnergyRecords) appendRecord(stub shim.ChaincodeStubInterface, args []st
 														4 -- Bid`)
 	}
 	//----------------------------------changed the indexing-------------------------
-	var record = Record{House: args[1], Time: args[2], Amount: args[3], Bid: args[4]}
+	bid, err := strconv.Atoi(args[4])
+	if err != nil {
+		errStr := fmt.Sprintf("Failed to parse bid (args[4]) as int. Got error: %s", err.Error())
+		return shim.Error(errStr)
+	}
+	amount, err := strconv.Atoi(args[3])
+	if err != nil {
+		errStr := fmt.Sprintf("Failed to parse energy amount (args[3]) as int. Got error: %s", err.Error())
+		return shim.Error(errStr)
+	}
+
+	var record = Record{House: args[1], Time: args[2], Amount: amount, Bid: bid}
 
 	recordAsBytes, _ := json.Marshal(record)
 	stub.PutState(args[0], recordAsBytes)
