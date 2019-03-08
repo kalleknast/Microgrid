@@ -21,10 +21,10 @@ networks:
 services:
 
   ca.microgrid.org:
-    container_name: ca.microgrid.org
     extends:
       file:   base/docker-compose-base.yaml
       service: ca.microgrid.org
+    # container_name: ca.microgrid.org
     networks:
       - mgn # Micro Grid Network
 
@@ -32,20 +32,20 @@ services:
     extends:
       file:   base/docker-compose-base.yaml
       service: orderer.microgrid.org
-    container_name: orderer.microgrid.org
+    # container_name: orderer.microgrid.org
     networks:
       - mgn # Micro Grid Network
 
   peer0.house01.microgrid.org:
-    container_name: peer0.house01.microgrid.org
     extends:
       file:  base/docker-compose-base.yaml
       service: peer0.house01.microgrid.org
+    # container_name: peer0.house01.microgrid.org
     networks:
       - mgn
 
   peer1.house01.microgrid.org:
-    container_name: peer1.house01.microgrid.org
+    # container_name: peer1.house01.microgrid.org
     extends:
       file:  base/docker-compose-base.yaml
       service: peer1.house01.microgrid.org
@@ -53,74 +53,74 @@ services:
       - mgn
 
   peer0.house02.microgrid.org:
-    container_name: peer0.house02.microgrid.org
     extends:
       file:  base/docker-compose-base.yaml
       service: peer0.house02.microgrid.org
+    # container_name: peer0.house02.microgrid.org
     networks:
       - mgn
 
   peer1.house02.microgrid.org:
-    container_name: peer1.house02.microgrid.org
     extends:
       file:  base/docker-compose-base.yaml
       service: peer1.house02.microgrid.org
+    # container_name: peer1.house02.microgrid.org
     networks:
       - mgn
 
   peer0.house03.microgrid.org:
-    container_name: peer0.house03.microgrid.org
     extends:
       file:  base/docker-compose-base.yaml
       service: peer0.house03.microgrid.org
+    # container_name: peer0.house03.microgrid.org
     networks:
       - mgn
 
   peer1.house03.microgrid.org:
-    container_name: peer1.house03.microgrid.org
     extends:
       file:  base/docker-compose-base.yaml
       service: peer1.house03.microgrid.org
+    # container_name: peer1.house03.microgrid.org
     networks:
       - mgn
 
   peer0.house04.microgrid.org:
-    container_name: peer0.house04.microgrid.org
     extends:
       file:  base/docker-compose-base.yaml
       service: peer0.house04.microgrid.org
+    # container_name: peer0.house04.microgrid.org
     networks:
       - mgn
 
   peer1.house04.microgrid.org:
-    container_name: peer1.house04.microgrid.org
     extends:
       file:  base/docker-compose-base.yaml
       service: peer1.house04.microgrid.org
+    # container_name: peer1.house04.microgrid.org
     networks:
       - mgn
 
   peer0.house05.microgrid.org:
-    container_name: peer0.house05.microgrid.org
     extends:
       file:  base/docker-compose-base.yaml
       service: peer0.house05.microgrid.org
+    # container_name: peer0.house05.microgrid.org
     networks:
       - mgn
 
   peer1.house05.microgrid.org:
-    container_name: peer1.house05.microgrid.org
     extends:
       file:  base/docker-compose-base.yaml
       service: peer1.house05.microgrid.org
+    # container_name: peer1.house05.microgrid.org
     networks:
       - mgn
 
   peer0.house06.microgrid.org:
-    container_name: peer0.house06.microgrid.org
     extends:
       file:  base/docker-compose-base.yaml
       service: peer0.house06.microgrid.org
+    # container_name: peer0.house06.microgrid.org
     networks:
       - mgn
 
@@ -141,8 +141,8 @@ services:
     environment:
       - GOPATH=/opt/gopath
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
-      #- FABRIC_LOGGING_SPEC=DEBUG
-      - FABRIC_LOGGING_SPEC=INFO
+      - FABRIC_LOGGING_SPEC=DEBUG
+      #- FABRIC_LOGGING_SPEC=INFO
       - CORE_PEER_ID=cli
       - CORE_PEER_ADDRESS=peer0.house01.microgrid.org:7051
       - CORE_PEER_LOCALMSPID=House01MSP
@@ -152,8 +152,6 @@ services:
       - CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house01.microgrid.org/peers/peer0.house01.microgrid.org/tls/ca.crt
       - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/house01.microgrid.org/users/Admin@house01.microgrid.org/msp
       - CORE_CHAINCODE_KEEPALIVE=15
-
-
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
     command: /bin/bash
     volumes:
