@@ -10,13 +10,13 @@
         - [x] Add channel
         - [x] peer join
     - [x] Make ```go build``` output something else than ```src```
-    - [x] See if the chaincode container in docker-compose-cli.yaml is neccessary
+    - [x] See if the chaincode container in docker-compose-cli.yaml is necessary
           **Conclusion**: *it could be removed*
 * [ ] Node.js application write energy data to the contract
     - [ ] figure out what to do with the admin secret key in ```enrollAdmin.js```
     - [ ] fix the ```affiliation``` setting, ```org1.department1``` seems to be hardcoded in ```/etc/hyperledger/fabric-ca-server/fabric-ca-server-config.yaml``` in the ```ca.microgrid.org``` container.
 * [x] Write chaincode to bid and aggregate, Market Clearing Price (MCP) algorithm
-    - [ ] Test that the MCP contract returns the correct values
+    - [x] Test that the MCP contract returns the correct values
 * [ ] Implementing the violation marketplace
     - [ ] Tracking and settlement for participants in the violation marketplace
 * [ ] Price optimization chaincode
