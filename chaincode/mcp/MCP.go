@@ -19,12 +19,13 @@ type MarketClearingPrice struct {
 }
 
 type Bid struct {
-	Price			int64 `json:"price"` 			 // The price per unit energy that either a consumer is willing to pay, or a generator is willing to sell for.
-	Quantity  int64 `json:"quantity"` 	 // The energy quantity tied to the bid. A positive value indicates that the bid represents consumption (demand curve) and a negative value indicates generation (supply curve).
-	AgentID 	string `json:"agent_id"`	 // A unique ID for each agent. May be used in post-processing, not in the market evaluation.
-	AgentType	string `json:"agent_type"` // The type of agent: "HVAC", "PV", "EV", "BESS", "Critical", "Grid"
-	Unit 			string `json:"unit"` 			 // Can be used to define the bid quantity units. By default, the units are assumed to be in Wh.
-	TimeStamp int64 `json:"time_stamp"`  // Timestamp for when the bid was made, used to gather bids placed over a given time period.
+	ObjectType string `json:"docType"` //docType is used to distinguish the various types of objects in state database
+	Price			int64 	`json:"price"` 			 // The price per unit energy that either a consumer is willing to pay, or a generator is willing to sell for.
+	Quantity  int64		`json:"quantity"` 	 // The energy quantity tied to the bid. A positive value indicates that the bid represents consumption (demand curve) and a negative value indicates generation (supply curve).
+	AgentID 	string 	`json:"agent_id"`	 // A unique ID for each agent. May be used in post-processing, not in the market evaluation.
+	AgentType	string 	`json:"agent_type"` // The type of agent: "HVAC", "PV", "EV", "BESS", "Critical", "Grid"
+	Unit 			string 	`json:"unit"` 			 // Can be used to define the bid quantity units. By default, the units are assumed to be in Wh.
+	TimeStamp int64 	`json:"time_stamp"`  // Timestamp for when the bid was made, used to gather bids placed over a given time period.
 }
 
 type Bids struct {
@@ -100,14 +101,18 @@ func (s *MarketClearingPrice) getMCP(stub shim.ChaincodeStubInterface, args []st
 	}
 
 	time_start := strconv.FormatInt(ts.GetSeconds() - NSeconds, 10)
-	queryStr := "{\"selector\":{\"TimeStamp\": {\"$gt\":" + time_start + "} }}"
+
+	queryStr := "{\"selector\":{\"time_stamp\": {\"$gt\":" + time_start + "} }}"
+	// queryStr := fmt.Sprintf("{\"selector\":{\"docType\":\"bid\",\"time_stamp\":{\"$gt\":%d} }}", time_start)
+	// debug; not printed to terminal
+	// check with "docker logs dev-peer0.house01.microgrid.org-mcp-1.0"
+	fmt.Printf("- getMCP:\n\tqueryStr:%s\n", queryStr)
+
 	resultsIterator, err := stub.GetQueryResult(queryStr)
-
-	defer resultsIterator.Close()
-
 	if err != nil {
 		return shim.Error(err.Error())
 	}
+	defer resultsIterator.Close()
 
 	// buffer is a JSON array containing QueryResults
 	var bids_buffer bytes.Buffer
@@ -299,6 +304,10 @@ func (s *MarketClearingPrice) getMCP(stub shim.ChaincodeStubInterface, args []st
 		bpp = bidTable[row][1]
 	}
 
+	// debug; not printed to terminal
+	// check with "docker logs dev-peer0.house01.microgrid.org-mcp-1.0"
+	fmt.Printf("- getMCP:\n\tMCP:%d\n\tBPP:%d\n", mcp, bpp)
+
 	// From:
 	// https://stackoverflow.com/questions/47429035/how-to-return-transaction-id-time-stamp-on-execution-of-invoke-function-in-chai
 	response, err := json.Marshal(MCPResponse{
@@ -357,7 +366,8 @@ func (s *MarketClearingPrice) putBid(stub shim.ChaincodeStubInterface, args []st
 	// TxID/Key (transaction ID with format <AgentID>_<yMD_HMS> e.g. A23_190129_235723)
 	key := args[2] + "_" + ts_str
 
-	var bid = Bid{Price: price,
+	var bid = Bid{ObjectType: "Bid",
+								Price: price,
 								Quantity: quantity,
 								AgentID: args[2],
 								AgentType: args[3],
@@ -367,6 +377,9 @@ func (s *MarketClearingPrice) putBid(stub shim.ChaincodeStubInterface, args []st
 	bidAsBytes, _ := json.Marshal(bid)
 
 	stub.PutState(key, bidAsBytes)
+
+	// debug; not printed to terminal; check with "docker logs dev-peer0.house01.microgrid.org-mcp-1.0"
+	fmt.Printf("- putBid:\n\tkey:%s\n", key)
 
 	return shim.Success(nil)
 }
@@ -407,14 +420,17 @@ func (s *MarketClearingPrice) getBidsForLastNSeconds(stub shim.ChaincodeStubInte
 	}
 
 	time_start := strconv.FormatInt(ts.GetSeconds() - NSeconds, 10)
-	queryStr := "{\"selector\":{\"TimeStamp\": {\"$gt\":" + time_start + "} }}"
+	queryStr := "{\"selector\":{\"time_stamp\": {\"$gt\":" + time_start + "} }}"
+	// queryStr := fmt.Sprintf("{\"selector\":{\"docType\":\"bid\",\"time_stamp\":{\"$gt\":%d} }}", time_start)
+	// debug; not printed to terminal
+	// check with "docker logs dev-peer0.house01.microgrid.org-mcp-1.0"
+	fmt.Printf("- getBidsForLastNSeconds:\n\tqueryStr:%s\n", queryStr)
+
 	resultsIterator, err := stub.GetQueryResult(queryStr)
-
-	defer resultsIterator.Close()
-
 	if err != nil {
 		return shim.Error(err.Error())
 	}
+	defer resultsIterator.Close()
 
 	// buffer is a JSON array containing QueryResults
 	var return_buffer bytes.Buffer
@@ -423,8 +439,14 @@ func (s *MarketClearingPrice) getBidsForLastNSeconds(stub shim.ChaincodeStubInte
 	supply_buffer.WriteString(`{"supply":[`)
 	demand_buffer.WriteString(`"demand":[`)
 
+	// debug; not printed to terminal
+	// check with "docker logs dev-peer0.house01.microgrid.org-mcp-1.0"
+	fmt.Printf("- getBidsForLastNSeconds:\n\tqueryResponse:")
 	for resultsIterator.HasNext() {
 		queryResponse, err := resultsIterator.Next()
+		// debug; not printed to terminal
+		// check with "docker logs dev-peer0.house01.microgrid.org-mcp-1.0"
+		fmt.Printf("\n%s", queryResponse)
 		if err != nil {
 			return shim.Error(err.Error())
 		}
@@ -465,7 +487,8 @@ func (s *MarketClearingPrice) getBidsForLastNSeconds(stub shim.ChaincodeStubInte
 	return_buffer.WriteString(`]}`)
 
 	// debug; not printed to terminal; check with "docker logs <CONTAINER ID>"
-	fmt.Printf("- getBidsForLastNSeconds:\n%s\n", return_buffer.String())
+	// docker logs dev-peer0.house01.microgrid.org-mcp-1.0
+	fmt.Printf("\n- getBidsForLastNSeconds:\n\t%s\n", return_buffer.String())
 
 	return shim.Success(return_buffer.Bytes())
 }
