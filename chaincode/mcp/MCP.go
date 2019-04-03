@@ -256,6 +256,8 @@ func (s *MarketClearingPrice) getMCP(stub shim.ChaincodeStubInterface, args []st
 			}
 	}
 
+	fmt.Printf("- getMCP:\n\trow = %d\n", row)
+
 	// Hack to fix merge redundant rows for Vertical Intersection
 	for i := 1; i < NBids; i++ {
 		if bidTable[i][0] == bidTable[i-1][0] {
@@ -285,12 +287,19 @@ func (s *MarketClearingPrice) getMCP(stub shim.ChaincodeStubInterface, args []st
 	// Find MCP and BPP
 	var mcp int64
 	var bpp int64
+	// No intersection
+	if row < 0 {
+		fmt.Printf("- getMCP:\n\tNo intersection\n")
+		mcp = 0
+		bpp = 0
 	// Horizontal Supply Intersection
-	if bidTable[row][2] == NaN {
+	} else if bidTable[row][2] == NaN {
+		fmt.Printf("- getMCP:\n\tHorizontal Supply Intersection\n")
 		mcp = bidTable[row][4]
 		bpp = bidTable[row][3]
 	// Horizontal Demand Intersection
 	} else if bidTable[row][1] == NaN {
+		fmt.Printf("- getMCP:\n\tHorizontal Demand Intersection\n")
 		for i := row; i >= 0; i-- {
 			if bidTable[i][1] != NaN {
 				mcp = bidTable[i][4]
@@ -300,6 +309,7 @@ func (s *MarketClearingPrice) getMCP(stub shim.ChaincodeStubInterface, args []st
 		}
 	// Vertical intersection
 	} else if bidTable[row][1] != NaN && bidTable[row][2] != NaN {
+		fmt.Printf("- getMCP:\n\tVertical intersection\n")
 		mcp = bidTable[row][2]
 		bpp = bidTable[row][1]
 	}
