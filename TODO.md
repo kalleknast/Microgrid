@@ -17,6 +17,7 @@
     - [ ] fix the ```affiliation``` setting, ```org1.department1``` seems to be hardcoded in ```/etc/hyperledger/fabric-ca-server/fabric-ca-server-config.yaml``` in the ```ca.microgrid.org``` container.
 * [x] Write chaincode to bid and aggregate, Market Clearing Price (MCP) algorithm
     - [x] Test that the MCP contract returns the correct values
+    - [ ] Add a check to putBid that ensures that the key is unique so that an existing bid doesn't get overwritten.
 * [ ] Implementing the violation marketplace
     - [ ] Tracking and settlement for participants in the violation marketplace
 * [ ] Price optimization chaincode

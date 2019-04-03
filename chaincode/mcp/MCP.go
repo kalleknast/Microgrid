@@ -373,6 +373,7 @@ func (s *MarketClearingPrice) putBid(stub shim.ChaincodeStubInterface, args []st
 	// 	return shim.Error(errStr)
 	// }
 
+	// TODO: check that the key is unique before putting a new bid.
 	// TxID/Key (transaction ID with format <AgentID>_<yMD_HMS> e.g. A23_190129_235723)
 	key := args[2] + "_" + ts_str
 
